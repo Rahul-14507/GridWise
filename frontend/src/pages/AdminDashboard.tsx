@@ -21,6 +21,7 @@ export const AdminDashboard: React.FC = () => {
     energy,
     evs,
     optimization,
+    telemetry,
     history,
     lastUpdated,
     isStale,
@@ -33,7 +34,7 @@ export const AdminDashboard: React.FC = () => {
     runOptimization,
     applyOptimization,
     triggerTick,
-  } = useSystemState(3000);
+  } = useSystemState(1000);
 
   // Initial loading state
   if (isLoading && !summary) {
@@ -84,6 +85,11 @@ export const AdminDashboard: React.FC = () => {
   }
 
   const warnings = summary?.warnings || status?.warnings || [];
+  const ambientTempC = telemetry?.temperature_c ?? 25.0;
+  const isOverload = ambientTempC >= 50.0;
+  const thermalStatus = isOverload ? 'CRITICAL' : ambientTempC > 35.0 ? 'ELEVATED' : 'NORMAL';
+  const rainDetected = telemetry?.rain_detected ?? false;
+  const rainIntensity = telemetry?.rain_intensity ?? 0.0;
 
   return (
     <div className="dashboard-container">
@@ -105,6 +111,26 @@ export const AdminDashboard: React.FC = () => {
 
       {/* Main Content Layout */}
       <main className="dashboard-main space-y-4">
+        {/* CRITICAL OVERLOAD ALERT (>50°C) */}
+        {isOverload && (
+          <div className="overload-alert-banner">
+            <div className="overload-icon-bubble">
+              <AlertOctagon size={30} />
+            </div>
+            <div className="flex-1">
+              <div className="overload-header">
+                <span className="overload-badge">🚨 CRITICAL OVERLOAD ALERT</span>
+                <h2 className="overload-title">
+                  TRANSFORMER OVERHEAT: {ambientTempC.toFixed(1)}°C
+                </h2>
+              </div>
+              <p className="overload-desc">
+                ESP32 sensor reports ambient temperature &gt; 50.0°C. Transformer safety interlocks engaged and grid capacity severely restricted to 10.0 kW.
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Top: Warnings / System Alerts */}
         <WarningsPanel warnings={warnings} />
 
@@ -119,15 +145,15 @@ export const AdminDashboard: React.FC = () => {
           <div className="lg:col-span-1">
             <SolarSubsystem
               energy={energy}
-              rainDetected={false}
-              rainIntensity={0.0}
+              rainDetected={rainDetected}
+              rainIntensity={rainIntensity}
             />
           </div>
           <div className="lg:col-span-1">
             <TransformerSafety
               energy={energy}
-              ambientTempC={25.0}
-              thermalStatus="NORMAL"
+              ambientTempC={ambientTempC}
+              thermalStatus={thermalStatus}
             />
           </div>
           <div className="lg:col-span-1">

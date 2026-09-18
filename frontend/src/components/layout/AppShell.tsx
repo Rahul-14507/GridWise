@@ -13,6 +13,7 @@ import {
   FileText,
   LayoutDashboard,
   Network,
+  Radio,
   RefreshCw,
   Settings,
   ShieldCheck,
@@ -20,13 +21,14 @@ import {
   Zap,
 } from 'lucide-react';
 
-export type GridTab = 'overview' | 'analytics' | 'nodes' | 'ev-fleet' | 'alerts' | 'reports' | 'settings';
+export type GridTab = 'overview' | 'analytics' | 'nodes' | 'ev-fleet' | 'mqtt' | 'alerts' | 'reports' | 'settings';
 
 export const TABS: { id: GridTab; label: string; icon: React.ElementType; hint: string }[] = [
   { id: 'overview', label: 'Overview', icon: LayoutDashboard, hint: 'SCADA Topology & Live KPIs' },
   { id: 'analytics', label: 'Analytics', icon: BarChart3, hint: 'Telemetry Deep-Dive & Load Trends' },
   { id: 'nodes', label: 'Node Management', icon: Network, hint: 'Substations, Feeders & Breakers' },
   { id: 'ev-fleet', label: 'EV Fleet', icon: Car, hint: 'Priority Allocation & Charger Control' },
+  { id: 'mqtt', label: 'Live ESP32 MQTT', icon: Radio, hint: 'HiveMQ Real-Time Ingestion & Edge Diagnostics' },
   { id: 'alerts', label: 'Alerts', icon: AlertTriangle, hint: 'Operational Fault Log & Constraints' },
   { id: 'reports', label: 'Reports', icon: FileText, hint: 'PDF / CSV / Excel Export Center' },
   { id: 'settings', label: 'System Settings', icon: Settings, hint: 'SCADA Config & Thresholds' },

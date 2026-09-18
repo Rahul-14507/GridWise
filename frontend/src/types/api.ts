@@ -131,6 +131,19 @@ export interface OptimizationApplyResponse {
   message: string;
 }
 
+export interface HardwareTelemetry {
+  device_id: string;
+  timestamp: string;
+  temperature_c: number;
+  humidity_percent: number;
+  rain_detected: boolean;
+  rain_intensity: number;
+  solar_voltage_v: number;
+  rain_raw?: number | null;
+  rain_status?: string | null;
+  solar_status?: string | null;
+}
+
 export interface HardwareStatusSummary {
   mode: 'simulation' | 'hardware' | string;
   online: boolean;

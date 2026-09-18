@@ -1,5 +1,6 @@
 """Main FastAPI application entrypoint for Smart EV Charging Management System."""
 
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.config.settings import get_settings
@@ -10,8 +11,21 @@ from app.api.routes.simulation import router as simulation_router
 from app.api.routes.hardware import router as hardware_router
 from app.api.routes.system import router as system_router
 from app.api.routes.optimization import router as optimization_router
+from app.infrastructure.hardware.mqtt_service import get_mqtt_subscriber
 
 settings = get_settings()
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """FastAPI application lifespan event handler for background MQTT subscriber."""
+    mqtt_sub = get_mqtt_subscriber()
+    mqtt_sub.start()
+    try:
+        yield
+    finally:
+        mqtt_sub.stop()
+
 
 app = FastAPI(
     title=settings.app_name,
@@ -19,6 +33,7 @@ app = FastAPI(
     version="0.5.0",
     docs_url="/docs",
     redoc_url="/redoc",
+    lifespan=lifespan,
 )
 
 # CORS configuration for frontend clients

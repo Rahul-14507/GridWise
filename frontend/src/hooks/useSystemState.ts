@@ -6,6 +6,7 @@ import {
   EnergyDetailResponse,
   EVDetailResponse,
   HardwareStatusSummary,
+  HardwareTelemetry,
   OptimizationDecision,
   SystemStatusResponse,
   SystemSummaryResponse,
@@ -22,6 +23,7 @@ export interface UseSystemStateResult {
   evs: EVDetailResponse[];
   optimization: OptimizationDecision | null;
   hardware: HardwareStatusSummary | null;
+  telemetry: HardwareTelemetry | null;
   history: TimeSeriesPoint[];
   lastUpdated: Date | null;
   isStale: boolean;
@@ -36,13 +38,14 @@ export interface UseSystemStateResult {
   triggerTick: (seconds?: number) => Promise<void>;
 }
 
-export const useSystemState = (intervalMs: number = 3000): UseSystemStateResult => {
+export const useSystemState = (intervalMs: number = 1000): UseSystemStateResult => {
   const [summary, setSummary] = useState<SystemSummaryResponse | null>(null);
   const [status, setStatus] = useState<SystemStatusResponse | null>(null);
   const [energy, setEnergy] = useState<EnergyDetailResponse | null>(null);
   const [evs, setEVs] = useState<EVDetailResponse[]>([]);
   const [optimization, setOptimization] = useState<OptimizationDecision | null>(null);
   const [hardware, setHardware] = useState<HardwareStatusSummary | null>(null);
+  const [telemetry, setTelemetry] = useState<HardwareTelemetry | null>(null);
   const [history, setHistory] = useState<TimeSeriesPoint[]>([]);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [isStale, setIsStale] = useState<boolean>(false);
@@ -59,13 +62,14 @@ export const useSystemState = (intervalMs: number = 3000): UseSystemStateResult 
     isFetchingRef.current = true;
 
     try {
-      const [sumRes, statRes, nrgRes, evsRes, optRes, hwRes] = await Promise.allSettled([
+      const [sumRes, statRes, nrgRes, evsRes, optRes, hwRes, telRes] = await Promise.allSettled([
         api.getSystemSummary(),
         api.getSystemStatus(),
         api.getEnergyState(),
         api.getEVs(),
         api.getOptimization(),
         api.getHardwareStatus(),
+        api.getLatestHardwareTelemetry(),
       ]);
 
       let hasSuccess = false;
@@ -91,6 +95,9 @@ export const useSystemState = (intervalMs: number = 3000): UseSystemStateResult 
       }
       if (hwRes.status === 'fulfilled') {
         setHardware(hwRes.value);
+      }
+      if (telRes.status === 'fulfilled') {
+        setTelemetry(telRes.value);
       }
 
       if (hasSuccess) {
@@ -210,6 +217,7 @@ export const useSystemState = (intervalMs: number = 3000): UseSystemStateResult 
     evs,
     optimization,
     hardware,
+    telemetry,
     history,
     lastUpdated,
     isStale,

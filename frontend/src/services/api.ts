@@ -4,6 +4,7 @@ import {
   EnergyDetailResponse,
   EVDetailResponse,
   HardwareStatusSummary,
+  HardwareTelemetry,
   OptimizationApplyResponse,
   OptimizationDecision,
   SystemStatusResponse,
@@ -106,6 +107,21 @@ export const fetchHardwareStatus = async (): Promise<HardwareStatusSummary> => {
   return handleResponse<HardwareStatusSummary>(res);
 };
 
+export const fetchLatestHardwareTelemetry = async (deviceId?: string): Promise<HardwareTelemetry> => {
+  const query = deviceId ? `?device_id=${encodeURIComponent(deviceId)}` : '';
+  const res = await fetch(`${getBaseUrl()}/hardware/telemetry/latest${query}`);
+  return handleResponse<HardwareTelemetry>(res);
+};
+
+export const postHardwareTelemetry = async (payload: any): Promise<any> => {
+  const res = await fetch(`${getBaseUrl()}/hardware/telemetry`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  return handleResponse<any>(res);
+};
+
 export const triggerTick = async (seconds: number = 60): Promise<any> => {
   const res = await fetch(`${getBaseUrl()}/simulation/tick?interval_seconds=${seconds}`, {
     method: 'POST',
@@ -146,8 +162,11 @@ export const api = {
   runOptimization,
   applyOptimization,
   getHardwareStatus: fetchHardwareStatus,
+  getLatestHardwareTelemetry: fetchLatestHardwareTelemetry,
+  postHardwareTelemetry,
   triggerTick,
   stepSimulation,
   resetSimulation,
   toggleHardwareMode,
 };
+

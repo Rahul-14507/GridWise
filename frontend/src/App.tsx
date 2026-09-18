@@ -1,7 +1,7 @@
 /**
  * GridWise Ops Console: SCADA & EV Energy Management Platform Entrypoint.
  * Stack: React 18 + TypeScript + Vite + Tailwind CSS.
- * 7 Tabs: Overview | Analytics | Node Management | EV Fleet | Alerts | Reports | System Settings.
+ * Tabs: Overview | Analytics | Node Management | EV Fleet | Live ESP32 MQTT | Alerts | Reports | System Settings.
  * Live data via useSystemState (FastAPI /api/v1) with mock fallback.
  */
 import React, { useMemo, useState } from 'react';
@@ -14,6 +14,7 @@ import { EVFleetPage } from './pages/EVFleetPage';
 import { AlertsPage } from './pages/AlertsPage';
 import { ReportsPage } from './pages/ReportsPage';
 import { SystemSettings } from './pages/SystemSettings';
+import { LiveMQTTMonitorPage } from './pages/LiveMQTTMonitorPage';
 import { useSystemState } from './hooks/useSystemState';
 import { getBaseUrl } from './services/api';
 import { generateMockTelemetry } from './data/mockGrid';
@@ -24,7 +25,7 @@ import type { GridNode } from './data/mockGrid';
 export const App: React.FC = () => {
   // -- Tab + polling state --
   const [tab, setTab] = useState<GridTab>('overview');
-  const [pollMs, setPollMs] = useState(3000);
+  const [pollMs, setPollMs] = useState(1000);
 
   const {
     summary,
@@ -32,6 +33,7 @@ export const App: React.FC = () => {
     energy,
     evs,
     optimization,
+    telemetry,
     history,
     lastUpdated,
     isStale,
@@ -100,6 +102,10 @@ export const App: React.FC = () => {
   const dataSource = summary?.data_source ?? status?.data_source ?? 'simulation';
   const dataSourceLabel = `${dataSource}${history.length >= 3 ? '' : ' | mock fallback'}`;
 
+  // -- Ambient Temperature Overload Alert (>50°C) Check --
+  const ambientTempC = telemetry?.temperature_c ?? 25.0;
+  const isOverload = ambientTempC >= 50.0;
+
   // -- Loading Screen --
   if (isLoading && !summary && !error) {
     return (
@@ -128,6 +134,26 @@ export const App: React.FC = () => {
       onTick={triggerTick}
       isTicking={isTicking}
     >
+      {/* Critical Overload Warning across all SCADA views */}
+      {isOverload && (
+        <div className="overload-alert-banner mb-3">
+          <div className="overload-icon-bubble">
+            <AlertOctagon size={30} />
+          </div>
+          <div className="flex-1">
+            <div className="overload-header">
+              <span className="overload-badge">🚨 CRITICAL OVERLOAD ALERT</span>
+              <h2 className="overload-title">
+                TRANSFORMER TEMPERATURE CRITICAL: {ambientTempC.toFixed(1)}°C
+              </h2>
+            </div>
+            <p className="overload-desc">
+              ESP32 sensor telemetry reports ambient temperature exceeding 50.0°C! Automatic transformer safety derating and emergency load shedding active.
+            </p>
+          </div>
+        </div>
+      )}
+
       {backendDown && (
         <div className="flex items-center gap-3 rounded-md border border-red-300 bg-red-50 p-3" role="alert">
           <AlertOctagon size={22} className="shrink-0 text-red-600" />
@@ -170,6 +196,10 @@ export const App: React.FC = () => {
 
       {tab === 'ev-fleet' && <EVFleetPage evs={evs} />}
 
+      {tab === 'mqtt' && (
+        <LiveMQTTMonitorPage onNavigateToDashboard={() => setTab('overview')} />
+      )}
+
       {tab === 'alerts' && <AlertsPage warnings={warnings} />}
 
       {tab === 'reports' && <ReportsPage summary={summary} energy={energy} />}
@@ -192,4 +222,3 @@ export const App: React.FC = () => {
 };
 
 export default App;
-
