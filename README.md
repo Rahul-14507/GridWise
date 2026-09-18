@@ -1,73 +1,200 @@
 # GridWise: Smart EV Charging Management System
 
-An intelligent Electric Vehicle charging management system designed to optimize energy allocation, respect grid constraints, leverage solar generation proxies, manage virtual battery storage, and schedule EV charging sessions efficiently.
+An intelligent Electric Vehicle (EV) charging management system designed to optimize energy allocation, respect physical grid constraints, leverage solar generation proxies, manage stationary virtual battery storage (BESS), and schedule EV charging sessions efficiently.
 
-## Project Phases
+---
 
-- **Phase 1: Backend Foundation** (Completed)
-  - Pure domain models using Pydantic v2 (EVs, Grid, Solar, Virtual BESS, Parking, ESP32 Telemetry)
-  - Available capacity calculation service
-  - Typed configuration management with pydantic-settings
-  - Minimal asynchronous FastAPI application
-- **Phase 2: Energy Intelligence & Simulation Engine** (Completed)
-  - Deterministic simulation clock and ESP32 telemetry simulator
-  - Calibrated solar availability and power estimation service
-  - Temperature-induced grid and transformer capacity derating service
-  - 24-hour diurnal building demand simulator with interpolation
-  - Physical EV charging fleet simulation and battery SoC integration
-  - Virtual battery charge/discharge physics
-  - 8 predefined operational test scenarios (e.g. `NORMAL_DAY`, `HOT_DAY`, `COMBINED_STRESS`)
-  - Interactive CLI simulation runner (`python -m app.simulation`)
-- **Phase 3: EV Priority and Charging Optimization Engine** (Completed)
-  - Normalized EV urgency metrics (SoC deficit, departure proximity, energy deficit, waiting fairness)
-  - Deadline feasibility analyzer (`FEASIBLE`, `AT_RISK`, `EXPIRED`, `COMPLETE`)
-  - Weighted composite priority scoring
-  - Constrained multi-pass iterative power allocator
-  - Stationary battery dispatch strategy (peak shaving & deficit support)
-  - Independent hard constraint safety verification
-  - Machine-readable explainability reasons for every EV allocation
-  - Full closed-loop integration with simulation engine
-- **Phase 4: Real Hardware Telemetry Integration** (Completed)
-  - Clean ESP32 edge telemetry ingestion boundary via HTTP JSON
-  - In-memory multi-device telemetry tracking and latest reading retrieval
-  - Connection freshness and staleness detection with configurable timeout
-  - SystemState synthesis from real physical sensors (temperature, humidity, rain, solar voltage)
-  - FastAPI endpoints for ingestion (`POST /telemetry`), latest reading (`GET /telemetry/latest`), and health diagnostics (`GET /status`)
-- **Phase 5: Production API + Real-Time State Layer** (Completed)
-  - Production-ready REST endpoints for system state, dashboard summary, and health status
-  - Enriched facility energy balance and EV fleet analytics endpoints
-  - Manual optimization execution (`POST /optimization/run`) and simulation application (`POST /optimization/apply`)
-  - Centralized in-memory `AppStateService` coordinator with factual warning generation
-  - Hardware mode safety guard (rejects direct hardware control with `409 Conflict`)
-  - CORS configured for local frontend development
+## Key Features
 
-For full technical documentation, data contracts, and quickstart instructions, refer to [backend/README.md](backend/README.md).
+- **Dynamic Grid & Thermal Derating**: Calculates available facility capacity based on transformer thermal limits and real-time temperature telemetry.
+- **Solar Irradiance Integration**: Calibrates solar sensor voltage to estimate real-time PV generation.
+- **Virtual Battery Storage (BESS)**: Simulates stationary battery physics to support peak shaving and deficit buffering.
+- **Prioritized EV Power Allocation**: Weighted multi-factor priority algorithm (SoC deficit, departure deadline proximity, waiting time fairness, energy requirement).
+- **Hard Safety Constraint Enforcement**: Guarantees total power allocations never exceed maximum safe grid capacity.
+- **Real-Time ESP32 Telemetry Ingestion**: Ingests sensor data from physical/simulated hardware with staleness detection.
+- **Production REST API**: FastAPI backend providing rich telemetry, system state, simulation control, and optimization endpoints.
+- **Admin Real-Time Dashboard**: React 18 + Vite + TypeScript dashboard with live charts, occupancy maps, and control controls.
 
-- **Phase 6: Admin Real-Time Dashboard** (Completed)
-  - Responsive web dashboard built with React 18, TypeScript, Vite, and Lucide React
-  - Real-time periodic polling with stale data detection and rolling telemetry history
-  - Infrastructure load, grid headroom, thermal derating, and safety utilization tracking
-  - Active EV fleet table with SoC target markers, deadline feasibility, and priority scoring
-  - Solar PV generation, sensor proxy voltage, and weather indicators
-  - Stationary Virtual Battery (BESS) dispatch monitoring
-  - Energy flow balance and charging bay occupancy breakdown
-  - Manual simulation advancement and optimization cycle triggers
-  - 23 passing frontend unit and integration tests (Vitest + React Testing Library)
+---
 
-## Quick Start
+## Project Architecture
+
+```text
+GridWise/
+├── backend/                   # Python FastAPI Backend
+│   ├── app/
+│   │   ├── api/routes/        # REST API Endpoints (/api/v1/*)
+│   │   ├── application/       # Application state coordinator & warnings
+│   │   ├── config/            # pydantic-settings configuration
+│   │   ├── domain/            # Domain models (EVs, Energy, Battery, Hardware, System)
+│   │   ├── infrastructure/    # ESP32 hardware telemetry ingestion & staleness
+│   │   ├── optimizer/         # Priority scoring, deadline feasibility & power allocator
+│   │   └── simulation/        # Closed-loop simulation engine & scenario presets
+│   ├── tests/                 # 167 Pytest unit & integration test suites
+│   ├── pyproject.toml
+│   └── requirements.txt
+│
+└── frontend/                  # React + Vite + TypeScript Frontend
+    ├── src/
+    │   ├── components/        # Reusable UI components (Header, FleetTable, Solar, Battery, etc.)
+    │   ├── hooks/             # Custom state & polling hooks (useSystemState)
+    │   ├── pages/             # Admin Dashboard page
+    │   ├── services/          # Centralized API fetch client
+    │   └── types/             # TypeScript API contract definitions
+    ├── tests/                 # 23 Vitest + React Testing Library test suites
+    ├── .env.development       # Development environment config (VITE_API_BASE_URL)
+    └── package.json
+```
+
+---
+
+## Prerequisites
+
+Before starting, ensure you have the following installed:
+
+- **Python**: Version `3.10` or higher
+- **Node.js**: Version `18.0` or higher
+- **npm**: Version `9.0` or higher (comes with Node.js)
+- **Git**: For version control
+
+---
+
+## Setup & Installation Guide
+
+### Step 1: Clone the Repository
 
 ```powershell
-# 1. Activate virtual environment
+git clone <repository-url>
+cd GridWise
+```
+
+### Step 2: Backend Setup (Python Virtual Environment)
+
+1. **Create a virtual environment**:
+   ```powershell
+   python -m venv .venv
+   ```
+
+2. **Activate the virtual environment**:
+   - **Windows (PowerShell)**:
+     ```powershell
+     .\.venv\Scripts\Activate.ps1
+     ```
+   - **Windows (CMD)**:
+     ```cmd
+     .\.venv\Scripts\activate.bat
+     ```
+   - **Linux / macOS**:
+     ```bash
+     source .venv/bin/activate
+     ```
+
+3. **Install backend dependencies**:
+   ```powershell
+   python -m pip install --upgrade pip
+   pip install -r backend/requirements.txt
+   ```
+
+### Step 3: Frontend Setup (Node.js & npm)
+
+1. Navigate to the frontend directory:
+   ```powershell
+   cd frontend
+   ```
+
+2. Install Node.js packages:
+   ```powershell
+   npm install
+   ```
+
+3. Verify environment configuration (`frontend/.env.development`):
+   Ensure `VITE_API_BASE_URL` points to the backend versioned API prefix:
+   ```env
+   VITE_API_BASE_URL=http://localhost:8000/api/v1
+   ```
+
+4. Return to root directory:
+   ```powershell
+   cd ..
+   ```
+
+---
+
+## Running the Application Locally
+
+To run the complete system, start the backend API server and the frontend dev server in separate terminal windows.
+
+### Terminal 1: Start Backend API Server
+
+```powershell
+# Ensure virtual environment is active
 .\.venv\Scripts\Activate.ps1
 
-# 2. Run all tests (167 tests)
-pytest backend/tests -v
-
-# 3. Run interactive CLI simulation with live Optimizer
-$env:PYTHONPATH="backend"
-python -m app.simulation --scenario NORMAL_DAY --ticks 5 --optimize
-
-# 4. Start FastAPI server
 cd backend
 python -m uvicorn app.main:app --reload --port 8000
 ```
+
+- **Backend Base URL**: `http://localhost:8000`
+- **API Version 1 Base**: `http://localhost:8000/api/v1`
+- **Interactive Swagger Docs**: `http://localhost:8000/docs`
+- **ReDoc Documentation**: `http://localhost:8000/redoc`
+- **Health Check**: `http://localhost:8000/health`
+
+### Terminal 2: Start Frontend Development Server
+
+```powershell
+cd frontend
+npm run dev
+```
+
+- **Admin Dashboard**: `http://localhost:3000` (or the local port displayed in terminal)
+
+---
+
+## Additional Operational Modes
+
+### Running CLI Simulation Mode (Headless)
+
+You can run the simulation engine directly in the terminal without starting the web servers:
+
+```powershell
+# Activate virtual environment
+.\.venv\Scripts\Activate.ps1
+
+# Set PYTHONPATH to include backend folder
+$env:PYTHONPATH="backend"
+
+# Run 10-step simulation with live optimizer under the HOT_DAY scenario
+python -m app.simulation --scenario HOT_DAY --ticks 10 --optimize
+```
+
+**Available Scenarios**: `NORMAL_DAY`, `HOT_DAY`, `SOLAR_SURPLUS`, `HIGH_EV_DEMAND`, `BESS_STRESS`, `SENSOR_FAILURE`, `OVERNIGHT_CHARGING`, `COMBINED_STRESS`.
+
+---
+
+## Running Test Suites
+
+### Backend Tests (167 tests via Pytest)
+
+```powershell
+# Activate virtual environment
+.\.venv\Scripts\Activate.ps1
+
+# Run all backend unit & integration tests
+pytest backend/tests -v
+```
+
+### Frontend Tests (23 tests via Vitest)
+
+```powershell
+cd frontend
+
+# Run frontend unit & component tests
+npm test
+```
+
+---
+
+## License
+
+Internal project repository — All rights reserved.
