@@ -163,3 +163,33 @@ export interface TimeSeriesPoint {
   evFleetPowerKw: number;
   batterySocPercent: number;
 }
+
+export type QRSessionStatus = 'active' | 'scanned' | 'registered' | 'expired';
+
+export interface QRSession {
+  session_id: string;
+  bay_id: string;
+  created_at: string;
+  status: QRSessionStatus;
+  ev_id?: string | null;
+  expires_at?: string | null;
+}
+
+export interface EVRegistrationRequest {
+  session_id: string;
+  ev_id?: string;
+  slot_id?: string;
+  battery_capacity_kwh: number;
+  soc_percent: number;
+  target_soc_percent: number;
+  max_charging_power_kw: number;
+  departure_in_hours: number;
+}
+
+export interface NetworkInfoResponse {
+  host_ip: string;
+  frontend_port: number;
+  backend_port: number;
+  driver_base_url: string;
+}
+

@@ -154,3 +154,15 @@ class OptimizationApplyResponse(BaseModel):
     battery_action: str = Field(..., description="Stationary battery dispatch command applied")
     battery_power_kw: float = Field(0.0, ge=0.0, description="Target battery power in kW")
     message: str = Field(default="Optimization decision successfully applied to simulation", description="Informational message")
+
+
+class NetworkInfoResponse(BaseModel):
+    """Network connection coordinates for cross-device QR scanning."""
+
+    model_config = ConfigDict(frozen=True)
+
+    host_ip: str = Field(..., description="Active LAN IPv4 address of the GridWise server")
+    frontend_port: int = Field(default=3000, description="Port number of the frontend kiosk/dashboard")
+    backend_port: int = Field(default=8000, description="Port number of the backend API")
+    driver_base_url: str = Field(..., description="Full base URL for driver mobile scanner landing")
+

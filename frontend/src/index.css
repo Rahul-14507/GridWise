@@ -594,51 +594,6 @@ body {
   .lg\:col-span-2 { grid-column: span 2 / span 2; }
 }
 
-/* GridWise Ops Console Additions */
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem 1rem;
-  color: var(--text-muted);
-  font-size: 0.85rem;
-  text-align: center;
-}
-.chart-empty {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px dashed var(--border-color);
-  border-radius: 4px;
-  background: #f8fafc;
-}
-.animate-spin { animation: spin 0.8s linear infinite; }
-
-/* Slim light scrollbars */
-.slim-scroll::-webkit-scrollbar { height: 6px; width: 6px; }
-.slim-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-.slim-scroll::-webkit-scrollbar-track { background: transparent; }
-
-/* Tab focus visibility for a11y */
-.tab-btn:focus-visible {
-  outline: 2px solid #2563eb;
-  outline-offset: 2px;
-}
-
-/* Pulsing halo for live grid-map nodes (SVG) */
-@keyframes nodePing {
-  0% { opacity: 0.7; r: 7; }
-  70% { opacity: 0; r: 14; }
-  100% { opacity: 0; r: 14; }
-}
-.node-ping { animation: nodePing 1.8s cubic-bezier(0, 0, 0.2, 1) infinite; transform-box: fill-box; transform-origin: center; }
-@keyframes dashFlow {
-  to { stroke-dashoffset: -24; }
-}
-.flow-line { stroke-dasharray: 6 6; animation: dashFlow 1.2s linear infinite; }
-.flow-line-paused { stroke-dasharray: 4 6; animation: none; opacity: 0.35; }
-
 /* ==========================================================================
    Top Global Navigation & Navigation Tabs
    ========================================================================== */
@@ -760,12 +715,12 @@ body {
   display: flex;
   align-items: center;
   gap: 0.65rem;
-  color: var(--text-primary);
+  color: #ffffff;
 }
 
 .mqtt-hero-meta {
   font-size: 0.775rem;
-  color: var(--text-muted);
+  color: #cbd5e1;
   margin-top: 0.25rem;
   display: flex;
   align-items: center;
@@ -795,7 +750,7 @@ body {
   font-size: 0.65rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--text-muted);
+  color: #94a3b8;
   display: block;
 }
 
@@ -822,7 +777,7 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
@@ -855,7 +810,7 @@ body {
   font-size: 2.2rem;
   font-weight: 800;
   font-family: 'JetBrains Mono', monospace;
-  color: #ffffff;
+  color: var(--text-primary);
   line-height: 1.1;
 }
 
@@ -868,8 +823,8 @@ body {
 .mqtt-sensor-footer {
   margin-top: 0.85rem;
   padding-top: 0.65rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  font-size: 0.725rem;
+  border-top: 1px solid var(--border-color);
+  font-size: 0.75rem;
   color: var(--text-muted);
 }
 
@@ -1122,3 +1077,307 @@ body {
   70% { transform: scale(1.1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
   100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
 }
+
+/* ==========================================================================
+   Terminal SCADA Console UI (Exact Reference Design)
+   ========================================================================== */
+.scada-container {
+  min-height: 100vh;
+  background-color: #0c0d0e;
+  color: #ededed;
+  font-family: 'JetBrains Mono', 'SF Mono', 'Roboto Mono', 'Fira Code', Consolas, Menlo, monospace;
+  padding: 1.5rem 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.scada-card {
+  width: 100%;
+  max-width: 680px;
+  background: #141518;
+  border: 1px solid #27272a;
+  border-radius: 18px;
+  padding: 2.2rem 2.5rem;
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+}
+
+.scada-main-title {
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+}
+
+.scada-divider {
+  width: 100%;
+  height: 1px;
+  background-color: #27272a;
+  margin-top: 0.5rem;
+}
+
+.scada-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.scada-section-title {
+  font-size: 0.775rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #d4d4d8;
+}
+
+.scada-box-border {
+  border: 1px solid #3f3f46;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+}
+
+.scada-grid-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  divide-x: 1px solid #3f3f46;
+}
+
+.scada-grid-cell {
+  padding: 0.65rem 0.75rem;
+  border-right: 1px solid #3f3f46;
+  border-bottom: 1px solid #3f3f46;
+}
+
+.scada-grid-cell:last-child {
+  border-right: none;
+}
+
+.scada-cell-header {
+  font-size: 0.7rem;
+  color: #a1a1aa;
+  margin-bottom: 0.35rem;
+  white-space: nowrap;
+}
+
+.scada-cell-val {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+.scada-mix-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 1px solid #3f3f46;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.scada-mix-col {
+  padding: 0.75rem 1rem;
+}
+
+.scada-mix-col:first-child {
+  border-right: 1px solid #3f3f46;
+}
+
+.scada-mix-header {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.4rem;
+}
+
+.scada-mix-primary {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.scada-mix-secondary {
+  font-size: 0.725rem;
+  color: #a1a1aa;
+  margin-top: 0.2rem;
+}
+
+/* Vehicle Table */
+.scada-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #3f3f46;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.25);
+  font-size: 0.775rem;
+}
+
+.scada-table th {
+  padding: 0.5rem 0.65rem;
+  text-align: left;
+  color: #a1a1aa;
+  font-weight: 700;
+  border-bottom: 1px solid #3f3f46;
+  border-right: 1px solid #3f3f46;
+}
+
+.scada-table th:last-child {
+  border-right: none;
+}
+
+.scada-table td {
+  padding: 0.5rem 0.65rem;
+  color: #ededed;
+  border-bottom: 1px solid #27272a;
+  border-right: 1px solid #3f3f46;
+}
+
+.scada-table td:last-child {
+  border-right: none;
+}
+
+.scada-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Transformer / System Info */
+.scada-system-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.scada-meter-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.4rem;
+}
+
+.scada-meter-bar {
+  font-family: monospace;
+  letter-spacing: -0.05em;
+  font-size: 1.1rem;
+  color: #ffffff;
+  user-select: none;
+}
+
+.scada-meter-pct {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.scada-metric-line {
+  font-size: 0.775rem;
+  color: #e4e4e7;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.scada-metric-label {
+  color: #a1a1aa;
+}
+
+.scada-metric-value {
+  font-weight: 700;
+  color: #ffffff;
+}
+
+/* Warnings */
+.scada-warning-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.775rem;
+  color: #fde047;
+  padding: 0.2rem 0;
+}
+
+.scada-warning-critical {
+  color: #f87171;
+  font-weight: 700;
+}
+
+.scada-warning-nominal {
+  color: #4ade80;
+}
+
+/* Interactive Footer */
+.scada-footer-toggle {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px dashed #3f3f46;
+  border-radius: 6px;
+  padding: 0.65rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #d4d4d8;
+  font-size: 0.775rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.scada-footer-toggle:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: #71717a;
+  color: #ffffff;
+}
+
+.scada-controls-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #27272a;
+}
+
+.scada-btn {
+  background: #27272a;
+  color: #ededed;
+  border: 1px solid #3f3f46;
+  border-radius: 6px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.725rem;
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: all 0.15s ease;
+}
+
+.scada-btn:hover:not(:disabled) {
+  background: #3f3f46;
+  color: #ffffff;
+  border-color: #52525b;
+}
+
+.scada-btn-primary {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #3b82f6;
+}
+
+.scada-btn-primary:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+.scada-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
