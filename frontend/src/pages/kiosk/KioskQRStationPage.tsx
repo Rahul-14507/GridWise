@@ -31,8 +31,14 @@ export const KioskQRStationPage: React.FC<KioskQRStationPageProps> = ({
 
   // Network Host State for external/mobile phone cameras
   const [networkHost, setNetworkHost] = useState<string>(() => {
-    const saved = localStorage.getItem('gridwise_lan_ip');
-    if (saved) return saved;
+    try {
+      if (typeof window !== 'undefined' && typeof localStorage !== 'undefined' && typeof localStorage.getItem === 'function') {
+        const saved = localStorage.getItem('gridwise_lan_ip');
+        if (saved) return saved;
+      }
+    } catch {
+      // Fallback if localStorage unavailable
+    }
     if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
       return window.location.hostname;
     }
@@ -47,7 +53,13 @@ export const KioskQRStationPage: React.FC<KioskQRStationPageProps> = ({
       const netInfo = await api.getNetworkInfo();
       if (netInfo?.host_ip && netInfo.host_ip !== '127.0.0.1') {
         setNetworkHost(netInfo.host_ip);
-        localStorage.setItem('gridwise_lan_ip', netInfo.host_ip);
+        try {
+          if (typeof window !== 'undefined' && typeof localStorage !== 'undefined' && typeof localStorage.setItem === 'function') {
+            localStorage.setItem('gridwise_lan_ip', netInfo.host_ip);
+          }
+        } catch {
+          // Ignore storage errors
+        }
       }
     } catch {
       // Keep existing default
@@ -225,7 +237,13 @@ export const KioskQRStationPage: React.FC<KioskQRStationPageProps> = ({
               onChange={(e) => {
                 const val = e.target.value;
                 setNetworkHost(val);
-                localStorage.setItem('gridwise_lan_ip', val);
+                try {
+                  if (typeof window !== 'undefined' && typeof localStorage !== 'undefined' && typeof localStorage.setItem === 'function') {
+                    localStorage.setItem('gridwise_lan_ip', val);
+                  }
+                } catch {
+                  // Ignore storage errors
+                }
               }}
               placeholder="e.g. 172.16.12.85"
               style={{
