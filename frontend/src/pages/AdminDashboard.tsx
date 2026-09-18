@@ -70,7 +70,7 @@ export const AdminDashboard: React.FC = () => {
           <div className="flex-1">
             <h3 className="font-bold text-base">Backend Connection Unavailable</h3>
             <p className="text-sm text-muted mt-0.5">
-              Unable to reach the GridWise backend at <code>{import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}</code>.
+              Unable to reach the GridWise backend at <code>{import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1'}</code>.
             </p>
             <p className="text-xs text-muted mt-1">Error: {error}</p>
           </div>

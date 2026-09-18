@@ -26,14 +26,15 @@ A modern, responsive, real-time monitoring and control dashboard for the GridWis
 cd frontend
 
 # Install dependencies
-npm.cmd install
+npm install
 
 # Start development server (http://localhost:3000)
-npm.cmd run dev
+npm run dev
 
 # Run Vitest test suites (23 tests)
-npm.cmd test
+npm test
 
 # Build production bundle
-npm.cmd run build
+npm run build
 ```
+
