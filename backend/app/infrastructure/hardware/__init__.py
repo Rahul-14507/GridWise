@@ -7,6 +7,10 @@ from app.infrastructure.hardware.telemetry_service import (
     TelemetryReceipt,
     get_hardware_telemetry_service,
 )
+from app.infrastructure.hardware.mqtt_service import (
+    MQTTTelemetrySubscriber,
+    get_mqtt_subscriber,
+)
 
 __all__ = [
     "HardwareDeviceStatus",
@@ -14,4 +18,7 @@ __all__ = [
     "HardwareTelemetryService",
     "TelemetryReceipt",
     "get_hardware_telemetry_service",
+    "MQTTTelemetrySubscriber",
+    "get_mqtt_subscriber",
 ]
+

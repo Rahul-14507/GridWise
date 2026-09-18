@@ -40,8 +40,20 @@ class WarningService:
                     )
                 )
 
-        # 2. Thermal Derating warnings
-        if system_state.thermal.thermal_status != ThermalStatus.NORMAL:
+        # 2. Thermal Derating & Overload warnings
+        if system_state.environment.temperature_c >= 50.0:
+            warnings.append(
+                SystemWarning(
+                    code="THERMAL_OVERLOAD_ALERT",
+                    severity="critical",
+                    message=(
+                        f"OVERLOAD ALERT: Ambient temperature has crossed 50°C ({system_state.environment.temperature_c:.1f}°C)! "
+                        f"Transformer and grid components are at severe risk of thermal overload. "
+                        f"Emergency cooling and load shedding required."
+                    ),
+                )
+            )
+        elif system_state.thermal.thermal_status != ThermalStatus.NORMAL:
             severity = "critical" if system_state.thermal.thermal_status == ThermalStatus.CRITICAL else "warning"
             warnings.append(
                 SystemWarning(
