@@ -48,6 +48,32 @@ class Settings(BaseSettings):
         gt=0.0,
         description="Timeout in seconds after which hardware telemetry is considered stale",
     )
+    mqtt_enabled: bool = Field(
+        default=True,
+        description="Enable background MQTT subscriber for hardware telemetry",
+    )
+    mqtt_broker_host: str = Field(
+        default="broker.hivemq.com",
+        description="MQTT broker hostname for edge telemetry ingestion",
+    )
+    mqtt_broker_port: int = Field(
+        default=1883,
+        gt=0,
+        description="MQTT broker TCP port",
+    )
+    mqtt_topic: str = Field(
+        default="gridwise/telemetry",
+        description="MQTT topic for hardware telemetry ingestion",
+    )
+    mqtt_client_id: str = Field(
+        default="gridwise_backend_subscriber",
+        description="MQTT client ID for backend connection",
+    )
+    mqtt_keepalive: int = Field(
+        default=60,
+        gt=0,
+        description="MQTT keepalive interval in seconds",
+    )
 
     # Grid & Electrical Defaults
     default_grid_capacity_kw: float = Field(

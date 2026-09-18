@@ -4,10 +4,12 @@ Centralizes access to the live SystemState, latest OptimizationDecision,
 and simulation/hardware execution bridges.
 """
 
-from datetime import datetime, timezone
-from functools import lru_cache
+import socket
 import threading
-from typing import List, Optional
+import uuid
+from datetime import datetime, timedelta, timezone
+from functools import lru_cache
+from typing import Dict, List, Optional
 
 from app.application.models import (
     BatterySummary,
@@ -16,6 +18,7 @@ from app.application.models import (
     EVDetailResponse,
     EVSummary,
     HardwareSummary,
+    NetworkInfoResponse,
     OptimizationApplyResponse,
     ParkingSummary,
     SystemStatusResponse,
@@ -24,6 +27,7 @@ from app.application.models import (
 from app.application.warnings import WarningService
 from app.config.settings import Settings, get_settings
 from app.domain.models.ev import EV, EVStatus
+from app.domain.models.qr_session import EVRegistrationRequest, QRSession, QRSessionStatus
 from app.domain.models.simulation import SimulationRunStatus
 from app.domain.models.system import SystemState
 from app.infrastructure.hardware.telemetry_service import (
@@ -50,6 +54,7 @@ class AppStateService:
         self._hw_service = hw_service or get_hardware_telemetry_service()
         self._optimizer = optimizer or ChargingOptimizer(settings=self._settings)
         self._latest_decision: Optional[OptimizationDecision] = None
+        self._qr_sessions: Dict[str, QRSession] = {}
         self._lock = threading.Lock()
         try:
             self.run_optimization()
@@ -59,7 +64,8 @@ class AppStateService:
     def get_current_state(self) -> SystemState:
         """Retrieve the authoritative SystemState snapshot according to configured data source."""
         with self._lock:
-            if self._settings.telemetry_data_source == "hardware":
+            hw_summary = self._hw_service.get_status_summary()
+            if self._settings.telemetry_data_source == "hardware" or hw_summary.active_devices > 0 or self._hw_service.get_latest_telemetry() is not None:
                 sim_state = self._sim_engine.get_state()
                 try:
                     return self._hw_service.build_hardware_system_state(
@@ -313,6 +319,114 @@ class AppStateService:
                 return ev_detail
         return None
 
+    def create_qr_session(self, bay_id: Optional[str] = None) -> QRSession:
+        """Generate a cryptographically unique single-use QR onboarding session."""
+        with self._lock:
+            token = f"QR-{uuid.uuid4().hex[:8].upper()}"
+            now = datetime.now(timezone.utc)
+            slot = bay_id or f"BAY-0{len(self._sim_engine.ev_sim.evs) + 1}"
+            session = QRSession(
+                session_id=token,
+                bay_id=slot,
+                created_at=now,
+                status=QRSessionStatus.ACTIVE,
+                expires_at=now + timedelta(minutes=15),
+            )
+            self._qr_sessions[token] = session
+            return session
+
+    def get_qr_session(self, session_id: str) -> Optional[QRSession]:
+        """Retrieve a QR onboarding session by session ID."""
+        with self._lock:
+            return self._qr_sessions.get(session_id)
+
+    def claim_qr_session(self, session_id: str) -> QRSession:
+        """Mark a QR session as scanned/claimed so the kiosk expires the token."""
+        with self._lock:
+            session = self._qr_sessions.get(session_id)
+            if session is None:
+                raise ValueError(f"QR Session '{session_id}' not found")
+            if session.status == QRSessionStatus.EXPIRED:
+                raise ValueError(f"QR Session '{session_id}' has expired")
+            if session.status == QRSessionStatus.REGISTERED:
+                return session
+
+            updated = session.model_copy(update={"status": QRSessionStatus.SCANNED})
+            self._qr_sessions[session_id] = updated
+            return updated
+
+    def register_driver_ev(self, req: EVRegistrationRequest) -> EVDetailResponse:
+        """Register a driver vehicle from a mobile QR scan into the active fleet."""
+        with self._lock:
+            session = self._qr_sessions.get(req.session_id)
+            if session is None:
+                raise ValueError(f"Invalid QR session token '{req.session_id}'")
+            if session.status == QRSessionStatus.EXPIRED:
+                raise ValueError("This QR code has expired. Please scan the current QR code on the kiosk.")
+            if session.status == QRSessionStatus.REGISTERED and session.ev_id:
+                # Idempotent response if already registered
+                existing = self.get_ev_detail(session.ev_id)
+                if existing:
+                    return existing
+
+            now = datetime.now(timezone.utc)
+            assigned_ev_id = req.ev_id or f"EV-{len(self._sim_engine.ev_sim.evs) + 1:03d}"
+            assigned_slot = req.slot_id or session.bay_id or f"BAY-{len(self._sim_engine.ev_sim.evs) + 1:02d}"
+            departure = now + timedelta(hours=max(0.5, req.departure_in_hours))
+
+            new_ev = EV(
+                id=assigned_ev_id,
+                slot_id=assigned_slot,
+                battery_capacity_kwh=req.battery_capacity_kwh,
+                soc_percent=req.soc_percent,
+                target_soc_percent=req.target_soc_percent,
+                max_charging_power_kw=req.max_charging_power_kw,
+                allocated_power_kw=0.0,
+                arrival_time=now,
+                departure_time=departure,
+                status=EVStatus.WAITING,
+            )
+
+            # Add to simulation fleet
+            existing_evs = [ev for ev in self._sim_engine.ev_sim.evs if ev.id != assigned_ev_id]
+            updated_fleet = [*existing_evs, new_ev]
+            self._sim_engine.ev_sim.set_evs(updated_fleet)
+            self._sim_engine.parking_sim.sync_with_evs(updated_fleet)
+
+            # Update QR session state
+            self._qr_sessions[req.session_id] = session.model_copy(
+                update={"status": QRSessionStatus.REGISTERED, "ev_id": assigned_ev_id}
+            )
+
+        # Run optimizer immediately so power is allocated
+        self.run_optimization()
+        self.apply_optimization_to_simulation()
+
+        detail = self.get_ev_detail(assigned_ev_id)
+        if detail is None:
+            raise RuntimeError(f"Failed to retrieve registered EV '{assigned_ev_id}'")
+        return detail
+
+    def get_network_info(self) -> NetworkInfoResponse:
+        """Discover the host machine's active local LAN IPv4 address."""
+        host_ip = "127.0.0.1"
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            try:
+                s.connect(("8.8.8.8", 80))
+                host_ip = s.getsockname()[0]
+            finally:
+                s.close()
+        except Exception:
+            host_ip = "127.0.0.1"
+
+        return NetworkInfoResponse(
+            host_ip=host_ip,
+            frontend_port=3000,
+            backend_port=8000,
+            driver_base_url=f"http://{host_ip}:3000/?view=driver",
+        )
+
     def reset_decision(self) -> None:
         """Clear cached optimization decision (for testing)."""
         with self._lock:
@@ -323,3 +437,4 @@ class AppStateService:
 def get_app_state_service() -> AppStateService:
     """Retrieve singleton AppStateService instance."""
     return AppStateService()
+

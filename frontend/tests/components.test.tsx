@@ -190,7 +190,7 @@ describe('Frontend Component Suite', () => {
 
   it('renders WarningsPanel correctly for active warnings and empty state', () => {
     const { rerender } = render(<WarningsPanel warnings={[]} />);
-    expect(screen.getByText('System Operational — No Active Safety or Constraint Warnings')).toBeInTheDocument();
+    expect(screen.getByText('System Operational: No Active Safety or Constraint Warnings')).toBeInTheDocument();
 
     const warnings = [
       { code: 'W_SOLAR_LOW', severity: 'warning', message: 'Solar output low due to rain' },

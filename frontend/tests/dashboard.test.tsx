@@ -93,13 +93,13 @@ describe('AdminDashboard Integration', () => {
     render(<AdminDashboard />);
 
     await waitFor(() => {
-      expect(screen.getByText('Infrastructure & Power Headroom')).toBeInTheDocument();
+      expect(screen.getByText('SMART EV CHARGING')).toBeInTheDocument();
     });
 
-    expect(screen.getByText('EV-001')).toBeInTheDocument();
-    expect(screen.getByText('Stationary Virtual Battery (BESS)')).toBeInTheDocument();
-    expect(screen.getByText('Solar PV & Renewable Generation')).toBeInTheDocument();
-    expect(screen.getByText('Real-Time Operational Telemetry Charts')).toBeInTheDocument();
+    expect(screen.getByText('GRID / INFRASTRUCTURE')).toBeInTheDocument();
+    expect(screen.getByText('ENERGY MIX')).toBeInTheDocument();
+    expect(screen.getByText('ACTIVE VEHICLES')).toBeInTheDocument();
+    expect(screen.getByText('SYSTEM / TRANSFORMER')).toBeInTheDocument();
   });
 
   it('renders error state when backend is unreachable', async () => {
@@ -113,7 +113,7 @@ describe('AdminDashboard Integration', () => {
     render(<AdminDashboard />);
 
     await waitFor(() => {
-      expect(screen.getByText('Backend Connection Unavailable')).toBeInTheDocument();
+      expect(screen.getByText('SCADA CONNECTION ERROR')).toBeInTheDocument();
     });
     expect(screen.getByText('Retry Connection')).toBeInTheDocument();
   });

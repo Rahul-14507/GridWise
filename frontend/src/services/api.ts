@@ -3,9 +3,13 @@
 import {
   EnergyDetailResponse,
   EVDetailResponse,
+  EVRegistrationRequest,
   HardwareStatusSummary,
+  HardwareTelemetry,
+  NetworkInfoResponse,
   OptimizationApplyResponse,
   OptimizationDecision,
+  QRSession,
   SystemStatusResponse,
   SystemSummaryResponse,
 } from '../types/api';
@@ -13,8 +17,16 @@ import {
 export const getBaseUrl = (): string => {
   const envUrl = import.meta.env?.VITE_API_BASE_URL;
   if (envUrl) {
-    return envUrl.endsWith('/') ? envUrl.slice(0, -1) : envUrl;
+    let url = envUrl;
+    if (url.endsWith('/')) url = url.slice(0, -1);
+    if (!url.endsWith('/api/v1') && url !== '') url = `${url}/api/v1`;
+    return url;
   }
+
+  if (typeof window !== 'undefined') {
+    return '/api/v1';
+  }
+
   return 'http://localhost:8000/api/v1';
 };
 
@@ -102,6 +114,21 @@ export const fetchHardwareStatus = async (): Promise<HardwareStatusSummary> => {
   return handleResponse<HardwareStatusSummary>(res);
 };
 
+export const fetchLatestHardwareTelemetry = async (deviceId?: string): Promise<HardwareTelemetry> => {
+  const query = deviceId ? `?device_id=${encodeURIComponent(deviceId)}` : '';
+  const res = await fetch(`${getBaseUrl()}/hardware/telemetry/latest${query}`);
+  return handleResponse<HardwareTelemetry>(res);
+};
+
+export const postHardwareTelemetry = async (payload: any): Promise<any> => {
+  const res = await fetch(`${getBaseUrl()}/hardware/telemetry`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  return handleResponse<any>(res);
+};
+
 export const triggerTick = async (seconds: number = 60): Promise<any> => {
   const res = await fetch(`${getBaseUrl()}/simulation/tick?interval_seconds=${seconds}`, {
     method: 'POST',
@@ -131,6 +158,42 @@ export const toggleHardwareMode = async (enable: boolean): Promise<any> => {
   return handleResponse<any>(res);
 };
 
+export const createQRSession = async (bayId?: string): Promise<QRSession> => {
+  const url = bayId ? `${getBaseUrl()}/evs/qr-session?bay_id=${encodeURIComponent(bayId)}` : `${getBaseUrl()}/evs/qr-session`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+  });
+  return handleResponse<QRSession>(res);
+};
+
+export const getQRSession = async (sessionId: string): Promise<QRSession> => {
+  const res = await fetch(`${getBaseUrl()}/evs/qr-session/${encodeURIComponent(sessionId)}`);
+  return handleResponse<QRSession>(res);
+};
+
+export const claimQRSession = async (sessionId: string): Promise<QRSession> => {
+  const res = await fetch(`${getBaseUrl()}/evs/qr-session/${encodeURIComponent(sessionId)}/claim`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+  });
+  return handleResponse<QRSession>(res);
+};
+
+export const registerDriverEV = async (payload: EVRegistrationRequest): Promise<EVDetailResponse> => {
+  const res = await fetch(`${getBaseUrl()}/evs/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  return handleResponse<EVDetailResponse>(res);
+};
+
+export const fetchNetworkInfo = async (): Promise<NetworkInfoResponse> => {
+  const res = await fetch(`${getBaseUrl()}/system/network-info`);
+  return handleResponse<NetworkInfoResponse>(res);
+};
+
 export const api = {
   getSystemSummary: fetchSystemSummary,
   getSystemStatus: fetchSystemStatus,
@@ -142,8 +205,16 @@ export const api = {
   runOptimization,
   applyOptimization,
   getHardwareStatus: fetchHardwareStatus,
+  getLatestHardwareTelemetry: fetchLatestHardwareTelemetry,
+  postHardwareTelemetry,
+  createQRSession,
+  getQRSession,
+  claimQRSession,
+  registerDriverEV,
+  getNetworkInfo: fetchNetworkInfo,
   triggerTick,
   stepSimulation,
   resetSimulation,
   toggleHardwareMode,
 };
+

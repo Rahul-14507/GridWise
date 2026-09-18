@@ -1,39 +1,43 @@
-# Operating System files
-.DS_Store
-Thumbs.db
+# Dependencies
+node_modules/
+**/node_modules/
 
-# Environment variables & Local configuration
-.env
-*.env.local
+# Build & Bundles
+dist/
+**/dist/
+build/
+outputs/
+frontend/dist/
 
-# Python / Backend
+# Vite & Vitest Cache
+.vite/
+**/.vite/
+frontend/.vite/
+.pytest_cache/
+**/.pytest_cache/
+
+# Python Cache & Virtual Environments
 __pycache__/
-*.py[cod]
-*$py.class
-*.so
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+env/
 .pytest_cache/
 .coverage
 htmlcov/
-.venv/
-venv/
-ENV/
-env/
 *.egg-info/
-dist/
-build/
-outputs/
 
-# Node / Frontend
-node_modules/
-frontend/dist/
-frontend/.vite/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-
-# IDE & Editor settings
+# Operating System & IDE
+.DS_Store
+Thumbs.db
 .vscode/
 .idea/
 *.swp
 *.swo
+
+# Environment variables & Local configuration
+.env
+*.env.local

@@ -131,6 +131,19 @@ export interface OptimizationApplyResponse {
   message: string;
 }
 
+export interface HardwareTelemetry {
+  device_id: string;
+  timestamp: string;
+  temperature_c: number;
+  humidity_percent: number;
+  rain_detected: boolean;
+  rain_intensity: number;
+  solar_voltage_v: number;
+  rain_raw?: number | null;
+  rain_status?: string | null;
+  solar_status?: string | null;
+}
+
 export interface HardwareStatusSummary {
   mode: 'simulation' | 'hardware' | string;
   online: boolean;
@@ -150,3 +163,33 @@ export interface TimeSeriesPoint {
   evFleetPowerKw: number;
   batterySocPercent: number;
 }
+
+export type QRSessionStatus = 'active' | 'scanned' | 'registered' | 'expired';
+
+export interface QRSession {
+  session_id: string;
+  bay_id: string;
+  created_at: string;
+  status: QRSessionStatus;
+  ev_id?: string | null;
+  expires_at?: string | null;
+}
+
+export interface EVRegistrationRequest {
+  session_id: string;
+  ev_id?: string;
+  slot_id?: string;
+  battery_capacity_kwh: number;
+  soc_percent: number;
+  target_soc_percent: number;
+  max_charging_power_kw: number;
+  departure_in_hours: number;
+}
+
+export interface NetworkInfoResponse {
+  host_ip: string;
+  frontend_port: number;
+  backend_port: number;
+  driver_base_url: string;
+}
+

@@ -72,3 +72,17 @@ def test_system_warnings_under_thermal_stress():
     data = response.json()
     warning_codes = [w["code"] for w in data["warnings"]]
     assert "THERMAL_DERATING_ACTIVE" in warning_codes
+
+
+def test_get_network_info():
+    response = client.get("/api/v1/system/network-info")
+    assert response.status_code == 200
+    data = response.json()
+    assert "host_ip" in data
+    assert "frontend_port" in data
+    assert "backend_port" in data
+    assert "driver_base_url" in data
+    assert data["frontend_port"] == 3000
+    assert data["backend_port"] == 8000
+    assert data["driver_base_url"].startswith("http://")
+
