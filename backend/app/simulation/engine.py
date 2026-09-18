@@ -151,9 +151,14 @@ class SimulationEngine:
         current_time = self.clock.advance(dt_seconds)
 
         # 2. Extract Controls
-        ev_allocations = control_input.ev_allocations if control_input else {}
-        battery_charge_kw = control_input.battery_charge_power_kw if control_input else 0.0
-        battery_discharge_kw = control_input.battery_discharge_power_kw if control_input else 0.0
+        if control_input is not None:
+            ev_allocations = control_input.ev_allocations
+            battery_charge_kw = control_input.battery_charge_power_kw
+            battery_discharge_kw = control_input.battery_discharge_power_kw
+        else:
+            ev_allocations = {ev.id: ev.allocated_power_kw for ev in self.ev_sim.evs if ev.allocated_power_kw > 0.0}
+            battery_charge_kw = self.battery_sim.last_charge_power_kw
+            battery_discharge_kw = self.battery_sim.last_discharge_power_kw
 
         # 3. Step Battery
         _, active_battery_power, _ = self.battery_sim.step(

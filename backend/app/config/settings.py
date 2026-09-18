@@ -5,6 +5,7 @@ and default values without scattering magic numbers across modules.
 """
 
 from functools import lru_cache
+from typing import List
 from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -31,6 +32,21 @@ class Settings(BaseSettings):
     api_v1_prefix: str = Field(
         default="/api/v1",
         description="Prefix for API version 1 endpoints",
+    )
+    cors_origins: List[str] = Field(
+        default=["*"],
+        description="CORS allowed origins for frontend communication",
+    )
+
+    # Telemetry & Hardware Integration Settings
+    telemetry_data_source: str = Field(
+        default="simulation",
+        description="Active telemetry data source ('simulation' or 'hardware')",
+    )
+    hardware_telemetry_timeout_seconds: float = Field(
+        default=300.0,
+        gt=0.0,
+        description="Timeout in seconds after which hardware telemetry is considered stale",
     )
 
     # Grid & Electrical Defaults
