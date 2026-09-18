@@ -1,0 +1,9 @@
+{
+  "device_id": "ESP32-001",
+  "timestamp": "2026-09-18T10:30:00Z",
+  "temperature_c": 31.4,
+  "humidity_percent": 62.1,
+  "rain_detected": false,
+  "rain_intensity": 0.0,
+  "solar_voltage_v": 2.14
+}

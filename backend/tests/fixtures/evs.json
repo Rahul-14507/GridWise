@@ -1,0 +1,50 @@
+[
+  {
+    "id": "EV-001",
+    "slot_id": "SLOT-01",
+    "battery_capacity_kwh": 60.0,
+    "soc_percent": 22.0,
+    "target_soc_percent": 90.0,
+    "max_charging_power_kw": 7.4,
+    "arrival_time": "2026-09-18T09:30:00Z",
+    "departure_time": "2026-09-18T11:30:00Z",
+    "allocated_power_kw": 7.4,
+    "status": "charging"
+  },
+  {
+    "id": "EV-002",
+    "slot_id": "SLOT-02",
+    "battery_capacity_kwh": 75.0,
+    "soc_percent": 61.0,
+    "target_soc_percent": 90.0,
+    "max_charging_power_kw": 11.0,
+    "arrival_time": "2026-09-18T09:45:00Z",
+    "departure_time": "2026-09-18T14:30:00Z",
+    "allocated_power_kw": 5.5,
+    "status": "charging"
+  },
+  {
+    "id": "EV-003",
+    "slot_id": "SLOT-03",
+    "battery_capacity_kwh": 50.0,
+    "soc_percent": 34.0,
+    "target_soc_percent": 90.0,
+    "max_charging_power_kw": 7.4,
+    "arrival_time": "2026-09-18T10:00:00Z",
+    "departure_time": "2026-09-18T11:45:00Z",
+    "allocated_power_kw": 0.0,
+    "status": "waiting"
+  },
+  {
+    "id": "EV-004",
+    "slot_id": "SLOT-04",
+    "battery_capacity_kwh": 100.0,
+    "soc_percent": 82.0,
+    "target_soc_percent": 90.0,
+    "max_charging_power_kw": 22.0,
+    "arrival_time": "2026-09-18T08:00:00Z",
+    "departure_time": "2026-09-18T18:00:00Z",
+    "allocated_power_kw": 3.7,
+    "status": "charging"
+  }
+]
