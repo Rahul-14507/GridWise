@@ -12,7 +12,7 @@ export const WarningsPanel: React.FC<WarningsPanelProps> = ({ warnings }) => {
       <div className="section-card border-emerald-200 dark:border-emerald-900 bg-emerald-50/50 dark:bg-emerald-950/20">
         <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400">
           <ShieldCheck size={18} />
-          <span className="font-semibold text-sm">System Operational — No Active Safety or Constraint Warnings</span>
+          <span className="font-semibold text-sm">System Operational: No Active Safety or Constraint Warnings</span>
         </div>
       </div>
     );
