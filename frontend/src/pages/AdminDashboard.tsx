@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSystemState } from '../hooks/useSystemState';
+import { getBaseUrl } from '../services/api';
 import { Header } from '../components/layout/Header';
 import { InfrastructureOverview } from '../components/infrastructure/InfrastructureOverview';
 import { TransformerSafety } from '../components/infrastructure/TransformerSafety';
@@ -70,7 +71,7 @@ export const AdminDashboard: React.FC = () => {
           <div className="flex-1">
             <h3 className="font-bold text-base">Backend Connection Unavailable</h3>
             <p className="text-sm text-muted mt-0.5">
-              Unable to reach the GridWise backend at <code>{import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1'}</code>.
+              Unable to reach the GridWise backend at <code>{getBaseUrl()}</code>.
             </p>
             <p className="text-xs text-muted mt-1">Error: {error}</p>
           </div>
@@ -149,7 +150,7 @@ export const AdminDashboard: React.FC = () => {
 
       {/* Footer */}
       <footer className="dashboard-footer">
-        <p>GridWise Smart EV Charging Management System — Real-Time Admin Telemetry & Optimization Dashboard</p>
+        <p>GridWise Smart EV Charging Management System: Real-Time Admin Telemetry & Optimization Dashboard</p>
       </footer>
     </div>
   );

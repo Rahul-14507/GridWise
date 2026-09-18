@@ -23,12 +23,12 @@ export const EVFleetTable: React.FC<EVFleetTableProps> = ({ evs }) => {
   };
 
   const getDeadlineBadge = (deadline: string | null) => {
-    if (!deadline) return <span className="text-muted text-xs">—</span>;
+    if (!deadline) return <span className="text-muted text-xs">N/A</span>;
     switch (deadline.toLowerCase()) {
       case 'feasible':
-        return <span className="badge badge-success text-xs">✓ FEASIBLE</span>;
+        return <span className="badge badge-success text-xs">FEASIBLE</span>;
       case 'at_risk':
-        return <span className="badge badge-danger text-xs">⚠ AT RISK</span>;
+        return <span className="badge badge-danger text-xs">AT RISK</span>;
       case 'expired':
         return <span className="badge badge-danger text-xs">EXPIRED</span>;
       case 'complete':
@@ -79,7 +79,7 @@ export const EVFleetTable: React.FC<EVFleetTableProps> = ({ evs }) => {
               <tr>
                 <th>Vehicle & Bay</th>
                 <th>Status</th>
-                <th>State of Charge (Current → Target)</th>
+                <th>State of Charge (Current to Target)</th>
                 <th>Charging Rate</th>
                 <th>Departure & Time</th>
                 <th>Required Avg Power</th>
@@ -155,7 +155,7 @@ export const EVFleetTable: React.FC<EVFleetTableProps> = ({ evs }) => {
                           </span>
                         </div>
                       ) : (
-                        <span className="text-muted text-xs">—</span>
+                        <span className="text-muted text-xs">N/A</span>
                       )}
                     </td>
 

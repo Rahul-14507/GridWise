@@ -12,10 +12,14 @@ import {
 
 export const getBaseUrl = (): string => {
   const envUrl = import.meta.env?.VITE_API_BASE_URL;
-  if (envUrl) {
-    return envUrl.endsWith('/') ? envUrl.slice(0, -1) : envUrl;
+  let url = envUrl || 'http://localhost:8000/api/v1';
+  if (url.endsWith('/')) {
+    url = url.slice(0, -1);
   }
-  return 'http://localhost:8000/api/v1';
+  if (!url.endsWith('/api/v1')) {
+    url = `${url}/api/v1`;
+  }
+  return url;
 };
 
 export const API_BASE_URL = getBaseUrl();
