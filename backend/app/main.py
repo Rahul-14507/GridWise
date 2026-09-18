@@ -10,13 +10,14 @@ from app.api.routes.simulation import router as simulation_router
 from app.api.routes.hardware import router as hardware_router
 from app.api.routes.system import router as system_router
 from app.api.routes.optimization import router as optimization_router
+from app.api.routes.parking import router as parking_router
 
 settings = get_settings()
 
 app = FastAPI(
     title=settings.app_name,
-    description="Smart EV Charging Management System Backend (Phase 5 - Production API & State Layer)",
-    version="0.5.0",
+    description="Smart EV Charging Management System Backend (Phase 8 - Parking Vision / OpenCV Integration)",
+    version="0.8.0",
     docs_url="/docs",
     redoc_url="/redoc",
 )
@@ -40,6 +41,7 @@ app.include_router(evs_router, prefix=settings.api_v1_prefix)
 app.include_router(optimization_router, prefix=settings.api_v1_prefix)
 app.include_router(simulation_router, prefix=settings.api_v1_prefix)
 app.include_router(hardware_router, prefix=settings.api_v1_prefix)
+app.include_router(parking_router, prefix=settings.api_v1_prefix)
 app.include_router(health_router, prefix=settings.api_v1_prefix)
 
 
@@ -49,7 +51,7 @@ async def root() -> dict:
     return {
         "status": "ok",
         "service": settings.app_name,
-        "phase": "Phase 5 - Production API + Real-Time State Layer",
+        "phase": "Phase 8 - Parking Vision / OpenCV Integration",
         "data_source": settings.telemetry_data_source,
         "docs": "/docs",
         "health": "/health",
@@ -60,4 +62,5 @@ async def root() -> dict:
         "optimization": f"{settings.api_v1_prefix}/optimization/current",
         "hardware_status": f"{settings.api_v1_prefix}/hardware/status",
         "simulation": f"{settings.api_v1_prefix}/simulation/state",
+        "parking_vision": f"{settings.api_v1_prefix}/parking/state",
     }

@@ -51,6 +51,10 @@ class AppStateService:
         self._optimizer = optimizer or ChargingOptimizer(settings=self._settings)
         self._latest_decision: Optional[OptimizationDecision] = None
         self._lock = threading.Lock()
+        try:
+            self.run_optimization()
+        except Exception:
+            pass
 
     def get_current_state(self) -> SystemState:
         """Retrieve the authoritative SystemState snapshot according to configured data source."""
