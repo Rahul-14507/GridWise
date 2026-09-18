@@ -3,9 +3,9 @@ import { api } from '../../services/api';
 import { EVDetailResponse, QRSession } from '../../types/api';
 import {
   BatteryCharging,
+  CheckCircle2,
   Clock,
   RefreshCw,
-  ShieldCheck,
   Zap,
 } from 'lucide-react';
 
@@ -415,29 +415,54 @@ export const DriverLiveStatusPage: React.FC<DriverLiveStatusPageProps> = ({
               </div>
             </div>
 
-            {/* Driver Return & Freedom Banner */}
-            <div
-              style={{
-                background: 'rgba(16, 185, 129, 0.08)',
-                border: '1px solid rgba(16, 185, 129, 0.3)',
-                borderRadius: '10px',
-                padding: '0.85rem 1rem',
-                display: 'flex',
-                alignItems: 'flex-start',
-                gap: '0.65rem',
-                fontSize: '0.75rem',
-                color: '#d1fae5',
-                lineHeight: 1.4,
-              }}
-            >
-              <ShieldCheck size={20} style={{ color: '#34d399', flexShrink: 0, marginTop: '2px' }} />
-              <div>
-                <strong>You are free to leave!</strong>
-                <p style={{ margin: '2px 0 0 0', color: '#a7f3d0' }}>
-                  Return to your car at <strong>{returnTimeStr}</strong> to unplug and move from Bay {session?.bay_id || '04'}.
-                </p>
+            {/* Status & Return Instructions Banner */}
+            {evDetail.soc_percent >= evDetail.target_soc_percent || evDetail.status === 'completed' ? (
+              <div
+                style={{
+                  background: 'rgba(16, 185, 129, 0.12)',
+                  border: '1px solid rgba(16, 185, 129, 0.4)',
+                  borderRadius: '10px',
+                  padding: '0.85rem 1rem',
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: '0.65rem',
+                  fontSize: '0.75rem',
+                  color: '#d1fae5',
+                  lineHeight: 1.4,
+                }}
+              >
+                <CheckCircle2 size={20} style={{ color: '#34d399', flexShrink: 0, marginTop: '2px' }} />
+                <div>
+                  <strong style={{ color: '#ffffff' }}>Target Charge Reached! (Ready to Move)</strong>
+                  <p style={{ margin: '2px 0 0 0', color: '#a7f3d0' }}>
+                    Your vehicle has reached <strong>{evDetail.target_soc_percent.toFixed(0)}%</strong>. Please unplug and move your car from <strong>Bay {session?.bay_id || evDetail.slot_id || '04'}</strong> for the next driver.
+                  </p>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div
+                style={{
+                  background: 'rgba(56, 189, 248, 0.08)',
+                  border: '1px solid rgba(56, 189, 248, 0.3)',
+                  borderRadius: '10px',
+                  padding: '0.85rem 1rem',
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: '0.65rem',
+                  fontSize: '0.75rem',
+                  color: '#e0f2fe',
+                  lineHeight: 1.4,
+                }}
+              >
+                <Clock size={20} style={{ color: '#38bdf8', flexShrink: 0, marginTop: '2px' }} />
+                <div>
+                  <strong style={{ color: '#ffffff' }}>Charging in Progress</strong>
+                  <p style={{ margin: '2px 0 0 0', color: '#bae6fd' }}>
+                    Your car is charging at <strong>Bay {session?.bay_id || evDetail.slot_id || '04'}</strong>. Estimated to reach {evDetail.target_soc_percent.toFixed(0)}% by <strong>{returnTimeStr}</strong> ({timeRemainingFormatted} remaining). Please return at <strong>{returnTimeStr}</strong> to unplug.
+                  </p>
+                </div>
+              </div>
+            )}
 
             {/* Actions */}
             <div style={{ display: 'flex', gap: '0.5rem' }}>
