@@ -5,7 +5,7 @@ and default values without scattering magic numbers across modules.
 """
 
 from functools import lru_cache
-from pydantic import Field
+from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -45,6 +45,55 @@ class Settings(BaseSettings):
         description="Maximum charging power per EV charger slot in kW (e.g. 7.4 kW Level 2 AC)",
     )
 
+    # Solar Calibration Parameters
+    solar_min_voltage_v: float = Field(
+        default=0.0,
+        ge=0.0,
+        description="Minimum sensor voltage corresponding to zero solar availability (V)",
+    )
+    solar_max_voltage_v: float = Field(
+        default=3.0,
+        gt=0.0,
+        description="Maximum sensor voltage corresponding to 100% solar availability (V)",
+    )
+    solar_capacity_kw: float = Field(
+        default=10.0,
+        gt=0.0,
+        description="Installed / nominal solar generation capacity at peak availability (kW)",
+    )
+
+    # Thermal Model & Capacity Derating Parameters
+    thermal_normal_temperature_c: float = Field(
+        default=25.0,
+        description="Baseline ambient temperature under normal operating conditions (°C)",
+    )
+    thermal_derating_start_c: float = Field(
+        default=35.0,
+        description="Ambient temperature threshold where grid capacity derating begins (°C)",
+    )
+    thermal_critical_temperature_c: float = Field(
+        default=50.0,
+        description="Ambient temperature threshold where maximum derating is reached (°C)",
+    )
+    minimum_grid_capacity_kw: float = Field(
+        default=10.0,
+        ge=0.0,
+        description="Floor grid capacity during severe thermal derating in kW",
+    )
+
+    # Building Demand Simulation Defaults
+    building_base_demand_kw: float = Field(
+        default=8.0,
+        ge=0.0,
+        description="Nominal baseline building electricity demand in kW",
+    )
+    building_demand_noise_percent: float = Field(
+        default=0.05,
+        ge=0.0,
+        le=0.5,
+        description="Relative random perturbation noise applied to building demand (0.05 = ±5%)",
+    )
+
     # Virtual Battery (BESS) Simulation Defaults
     virtual_battery_capacity_kwh: float = Field(
         default=50.0,
@@ -74,27 +123,91 @@ class Settings(BaseSettings):
         gt=0,
         description="Interval duration between simulated telemetry and optimization cycles in seconds",
     )
+    simulation_time_scale: float = Field(
+        default=1.0,
+        gt=0.0,
+        description="Speed multiplier for simulation execution relative to real-time",
+    )
+    random_seed: int = Field(
+        default=42,
+        description="Seed for deterministic pseudo-random number generation in simulation components",
+    )
 
-    # Priority Weights Placeholders (Deferred implementation for Milestone 2+)
-    # Note: These values are strictly configuration placeholders; no priority calculation is performed in Milestone 1.
-    priority_weight_urgency: float = Field(
-        default=0.4,
+    # Phase 3 Optimizer Parameters & Priority Weights
+    priority_weight_soc: float = Field(
+        default=0.35,
         ge=0.0,
         le=1.0,
-        description="Config placeholder for departure urgency weight in future optimizer",
+        description="Weight for current State of Charge urgency in priority scoring (0.35)",
+    )
+    priority_weight_departure: float = Field(
+        default=0.40,
+        ge=0.0,
+        le=1.0,
+        description="Weight for departure urgency in priority scoring (0.40)",
     )
     priority_weight_deficit: float = Field(
-        default=0.4,
+        default=0.15,
         ge=0.0,
         le=1.0,
-        description="Config placeholder for energy deficit weight in future optimizer",
+        description="Weight for energy deficit fraction in priority scoring (0.15)",
+    )
+    priority_weight_waiting: float = Field(
+        default=0.10,
+        ge=0.0,
+        le=1.0,
+        description="Weight for waiting time fairness in priority scoring (0.10)",
+    )
+
+    # Legacy alias compatibility for Phase 1 placeholders if needed
+    priority_weight_urgency: float = Field(
+        default=0.40,
+        ge=0.0,
+        le=1.0,
+        description="Legacy alias for departure urgency weight",
     )
     priority_weight_stay_duration: float = Field(
-        default=0.2,
+        default=0.10,
         ge=0.0,
         le=1.0,
-        description="Config placeholder for stay duration weight in future optimizer",
+        description="Legacy alias for stay duration / waiting weight",
     )
+
+    departure_urgency_horizon_hours: float = Field(
+        default=4.0,
+        gt=0.0,
+        description="Time horizon in hours where departure urgency begins ramping up",
+    )
+    departure_critical_horizon_hours: float = Field(
+        default=1.0,
+        gt=0.0,
+        description="Time horizon in hours where departure is considered near-critical",
+    )
+    waiting_reference_minutes: float = Field(
+        default=60.0,
+        gt=0.0,
+        description="Reference waiting duration in minutes for normalizing waiting time score to 1.0",
+    )
+    enable_battery_support_in_optimizer: bool = Field(
+        default=True,
+        description="Whether optimizer may dispatch virtual battery discharge to support EV charging deficit",
+    )
+
+    @model_validator(mode="after")
+    def validate_priority_weights(self) -> "Settings":
+        total_weight = (
+            self.priority_weight_soc
+            + self.priority_weight_departure
+            + self.priority_weight_deficit
+            + self.priority_weight_waiting
+        )
+        if not (0.999 <= total_weight <= 1.001):
+            raise ValueError(
+                f"Priority weights must sum to 1.0 (got sum={total_weight:.4f}: "
+                f"soc={self.priority_weight_soc}, dep={self.priority_weight_departure}, "
+                f"def={self.priority_weight_deficit}, wait={self.priority_weight_waiting})"
+            )
+        return self
 
 
 @lru_cache()

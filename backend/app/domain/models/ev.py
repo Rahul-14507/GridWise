@@ -74,6 +74,51 @@ class EV(BaseModel):
         description="Current operational status of the vehicle.",
     )
 
+    @property
+    def energy_required_kwh(self) -> float:
+        """Calculate the remaining energy in kWh needed to achieve target SoC.
+
+        Formula:
+            energy_required = capacity_kwh * max(0.0, target_soc% - soc%) / 100.0
+        """
+        if self.soc_percent >= self.target_soc_percent:
+            return 0.0
+        deficit_percent = self.target_soc_percent - self.soc_percent
+        return round(self.battery_capacity_kwh * (deficit_percent / 100.0), 4)
+
+    def remaining_time_hours(self, current_time: datetime) -> float:
+        """Calculate the remaining time until scheduled departure in hours.
+
+        Args:
+            current_time: Current simulation or wall-clock timestamp (timezone-aware).
+
+        Returns:
+            Remaining duration in hours, clamped to minimum 0.0.
+        """
+        if current_time.tzinfo is None:
+            raise ValueError("current_time must be timezone-aware")
+        delta = (self.departure_time - current_time).total_seconds()
+        return max(0.0, delta / 3600.0)
+
+    def required_average_power_kw(self, current_time: datetime) -> float:
+        """Calculate the minimum average charging power in kW needed to reach target SoC by departure.
+
+        Note: This is a pure physical constraint calculation and NOT a priority score.
+
+        Args:
+            current_time: Current simulation or wall-clock timestamp (timezone-aware).
+
+        Returns:
+            Required power in kW (float >= 0.0).
+        """
+        energy_req = self.energy_required_kwh
+        if energy_req <= 0.0:
+            return 0.0
+        time_rem = self.remaining_time_hours(current_time)
+        if time_rem <= 0.0:
+            return 0.0
+        return round(energy_req / time_rem, 4)
+
     @field_validator("id")
     @classmethod
     def validate_id_not_whitespace(cls, v: str) -> str:

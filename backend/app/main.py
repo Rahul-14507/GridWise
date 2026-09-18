@@ -6,13 +6,14 @@ from app.config.settings import get_settings
 from app.api.routes.health import router as health_router
 from app.api.routes.energy import router as energy_router
 from app.api.routes.evs import router as evs_router
+from app.api.routes.simulation import router as simulation_router
 
 settings = get_settings()
 
 app = FastAPI(
     title=settings.app_name,
-    description="Smart EV Charging Management System Backend (Milestone 1)",
-    version="0.1.0",
+    description="Smart EV Charging Management System Backend (Phase 2 - Simulation Engine)",
+    version="0.2.0",
     docs_url="/docs",
     redoc_url="/redoc",
 )
@@ -29,9 +30,10 @@ app.add_middleware(
 # Root-level health endpoint (GET /health)
 app.include_router(health_router)
 
-# Versioned API routes (GET /api/v1/energy, GET /api/v1/evs, etc.)
+# Versioned API routes (GET /api/v1/energy, GET /api/v1/evs, /api/v1/simulation, etc.)
 app.include_router(energy_router, prefix=settings.api_v1_prefix)
 app.include_router(evs_router, prefix=settings.api_v1_prefix)
+app.include_router(simulation_router, prefix=settings.api_v1_prefix)
 app.include_router(health_router, prefix=settings.api_v1_prefix)
 
 
@@ -39,8 +41,10 @@ app.include_router(health_router, prefix=settings.api_v1_prefix)
 async def root() -> dict:
     """Root metadata response."""
     return {
+        "status": "ok",
         "service": settings.app_name,
-        "milestone": "Milestone 1 - Backend Foundation",
+        "phase": "Phase 2 - Energy Intelligence & Simulation Engine",
         "docs": "/docs",
         "health": "/health",
+        "simulation": f"{settings.api_v1_prefix}/simulation/state",
     }
