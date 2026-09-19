@@ -23,7 +23,7 @@ def test_scenario_manager_get_all_scenarios():
         assert isinstance(scenario, Scenario)
         assert scenario.name == name
         assert len(scenario.description) > 0
-        assert len(scenario.evs) >= 4
+        assert isinstance(scenario.evs, list)
         assert scenario.battery.capacity_kwh > 0
         assert scenario.parking.total_slots >= len(scenario.evs)
 

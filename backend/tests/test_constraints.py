@@ -9,7 +9,7 @@ from app.optimizer.constraints import ConstraintValidator, ConstraintViolationEr
 
 @pytest.fixture
 def base_state() -> SystemState:
-    engine = SimulationEngine(scenario_name="NORMAL_DAY")
+    engine = SimulationEngine(scenario_name="MOCK_FLEET")
     return engine.get_state()
 
 

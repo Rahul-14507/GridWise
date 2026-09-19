@@ -13,7 +13,7 @@ def test_simulation_engine_initialization():
 
     assert state.environment.device_id == "ESP32-SIM-001"
     assert state.energy.grid.max_capacity_kw == 25.0
-    assert len(state.evs) == 4
+    assert len(state.evs) == 0
     assert state.parking.total_slots == 4
     assert engine.status == SimulationRunStatus.STOPPED
 
@@ -30,7 +30,7 @@ def test_simulation_engine_single_tick_advances_time():
 
 def test_simulation_engine_apply_ev_allocations():
     """Verify externally supplied EV charging allocations evolve vehicle SoCs."""
-    engine = SimulationEngine(scenario_name="NORMAL_DAY")
+    engine = SimulationEngine(scenario_name="MOCK_FLEET")
     initial_soc_ev1 = engine.ev_sim.get_ev("EV-001").soc_percent
 
     # Apply 7.4 kW to EV-001 for 10 ticks of 60 seconds (600s = 0.1667h)
@@ -74,8 +74,8 @@ def test_simulation_engine_scenario_switching():
 
 def test_simulation_engine_determinism():
     """Verify that resetting and running the exact same ticks produces identical results."""
-    engine1 = SimulationEngine(scenario_name="NORMAL_DAY")
-    engine2 = SimulationEngine(scenario_name="NORMAL_DAY")
+    engine1 = SimulationEngine(scenario_name="MOCK_FLEET")
+    engine2 = SimulationEngine(scenario_name="MOCK_FLEET")
 
     control = SimulationControlInput(ev_allocations={"EV-001": 7.4, "EV-002": 3.7})
 

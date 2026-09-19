@@ -28,8 +28,8 @@ async def test_api_simulation_tick_and_control():
     async with AsyncClient(
         transport=ASGITransport(app=app), base_url="http://test"
     ) as client:
-        # Reset first
-        await client.post("/api/v1/simulation/reset")
+        # Load MOCK_FLEET first
+        await client.post("/api/v1/simulation/scenarios/MOCK_FLEET")
 
         # Step tick with EV-001 allocation
         payload = {
@@ -50,7 +50,7 @@ async def test_api_optimize_tick():
     async with AsyncClient(
         transport=ASGITransport(app=app), base_url="http://test"
     ) as client:
-        await client.post("/api/v1/simulation/reset")
+        await client.post("/api/v1/simulation/scenarios/MOCK_FLEET")
         response = await client.post("/api/v1/simulation/optimize-tick?interval_seconds=60")
     assert response.status_code == 200
     data = response.json()

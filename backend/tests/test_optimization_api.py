@@ -14,7 +14,7 @@ client = TestClient(app)
 @pytest.fixture(autouse=True)
 def reset_state():
     engine = get_simulation_engine()
-    engine.load_scenario("NORMAL_DAY")
+    engine.load_scenario("MOCK_FLEET")
     service = get_app_state_service()
     service.reset_decision()
     yield

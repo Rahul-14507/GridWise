@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
-import React from 'react';
 import { ParkingVisionPanel } from '../src/components/parking/ParkingVisionPanel';
 import { api } from '../src/services/api';
 import { EVDetailResponse, ParkingVisionState } from '../src/types/api';
@@ -10,7 +9,7 @@ vi.mock('../src/services/api', () => ({
     getParkingVisionState: vi.fn(),
     getSlotVisionStatus: vi.fn(),
     controlParkingReplay: vi.fn(),
-    getParkingFrameUrl: vi.fn((frameId?: string, composite?: boolean, debug?: boolean) => {
+    getParkingFrameUrl: vi.fn((frameId?: string, _composite?: boolean, _debug?: boolean) => {
       return `/api/v1/parking/frame?t=${frameId || '123'}`;
     }),
   },

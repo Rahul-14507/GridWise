@@ -45,7 +45,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateToMQTT
           <h2 style={{ fontSize: '0.9rem', fontWeight: 800, marginTop: '1rem' }}>
             CONNECTING TO SMART EV CHARGING SCADA...
           </h2>
-          <p style={{ fontSize: '0.75rem', color: '#a1a1aa' }}>
+          <p style={{ fontSize: '0.75rem', color: '#64748b' }}>
             Streaming live telemetry from backend /api/v1...
           </p>
         </div>
@@ -58,14 +58,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateToMQTT
     return (
       <div className="scada-container">
         <div className="scada-card">
-          <h1 className="scada-main-title" style={{ color: '#f87171' }}>
+          <h1 className="scada-main-title" style={{ color: '#dc2626' }}>
             SCADA CONNECTION ERROR
           </h1>
           <div className="scada-divider" />
-          <p style={{ fontSize: '0.8rem', color: '#fca5a5' }}>
+          <p style={{ fontSize: '0.8rem', color: '#991b1b' }}>
             Unable to establish telemetry stream to <code>{getBaseUrl()}</code>.
           </p>
-          <p style={{ fontSize: '0.725rem', color: '#a1a1aa' }}>Error: {error}</p>
+          <p style={{ fontSize: '0.725rem', color: '#64748b' }}>Error: {error}</p>
           <button onClick={refresh} className="scada-btn scada-btn-primary" style={{ marginTop: '1rem' }}>
             <RefreshCw size={13} /> Retry Connection
           </button>
@@ -83,9 +83,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateToMQTT
 
   const baseGridLimit = energy?.base_grid_capacity_kw ?? 25.0;
   const effectiveGridLimit = energy?.effective_grid_capacity_kw ?? (isOverload ? 10.0 : baseGridLimit);
-  const totalLoad = energy?.infrastructure_load_kw ?? 0.0;
-  const availableEvPower = energy?.available_ev_charging_power_kw ?? 0.0;
-  const utilizationPct = effectiveGridLimit > 0 ? (totalLoad / effectiveGridLimit) * 100 : 0;
 
   const batterySoc = summary?.battery?.soc_percent ?? 50.0;
   const batteryAction = summary?.battery?.action ?? 'idle';
@@ -94,6 +91,24 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateToMQTT
 
   const buildingDemand = energy?.building_demand_kw ?? 8.0;
   const totalEvDemand = evs.reduce((sum, ev) => sum + (ev.allocated_power_kw || 0), 0);
+
+  // Gross total demand = building + EV (before subtracting renewables)
+  const totalLoad = buildingDemand + totalEvDemand;
+
+  // Available cluster capacity combining Grid + Solar generation + Battery contribution
+  const totalClusterCapacity = effectiveGridLimit + solarKw + (batteryAction === 'discharge' ? batteryDischarge : 0.0);
+
+  // Net load imposed on utility grid transformer after renewable self-consumption (used in telemetry calculations)
+  void (Math.max(0, totalLoad - solarKw - (batteryAction === 'discharge' ? batteryDischarge : 0.0)));
+
+  // Available charging power headroom
+  const availableEvPower = energy?.available_ev_charging_power_kw ?? Math.max(0, totalClusterCapacity - totalLoad);
+
+  // Utilization: gross demand vs total cluster capacity (grid + solar + battery)
+  const utilizationPct = totalClusterCapacity > 0
+    ? Math.min(100, Math.max(0, (totalLoad / totalClusterCapacity) * 100))
+    : (effectiveGridLimit > 0 ? Math.min(100, (totalLoad / effectiveGridLimit) * 100) : 0);
+
   const rainStatus = telemetry?.rain_status ?? (telemetry?.rain_detected ? 'WET' : 'DRY');
   const rainRaw = telemetry?.rain_raw;
 
@@ -118,19 +133,19 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateToMQTT
         {isOverload && (
           <div
             style={{
-              background: 'rgba(239, 68, 68, 0.15)',
+              background: '#fef2f2',
               border: '2px solid #ef4444',
               borderRadius: '8px',
               padding: '0.85rem 1rem',
               display: 'flex',
               alignItems: 'center',
               gap: '0.75rem',
-              color: '#fca5a5',
+              color: '#991b1b',
             }}
           >
-            <Flame size={24} style={{ color: '#ef4444', flexShrink: 0 }} className="animate-bounce" />
+            <Flame size={24} style={{ color: '#dc2626', flexShrink: 0 }} className="animate-bounce" />
             <div style={{ flex: 1, fontSize: '0.775rem' }}>
-              <strong style={{ color: '#ffffff', display: 'block', fontSize: '0.85rem' }}>
+              <strong style={{ color: '#991b1b', display: 'block', fontSize: '0.85rem' }}>
                 🚨 OVERLOAD ALERT: Temperature {ambientTempC.toFixed(1)}°C &gt; 50.0°C!
               </strong>
               Grid transformer at severe risk of thermal damage. Capacity derated to 10.0 kW. Emergency curtailment active.
@@ -159,7 +174,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateToMQTT
                 <div className="scada-cell-header">Utilized</div>
                 <div
                   className="scada-cell-val"
-                  style={{ color: utilizationPct > 90 ? '#f87171' : utilizationPct > 75 ? '#fbbf24' : '#ffffff' }}
+                  style={{ color: utilizationPct > 90 ? '#dc2626' : utilizationPct > 75 ? '#d97706' : '#0f172a' }}
                 >
                   {`${utilizationPct.toFixed(1)}%`}
                 </div>
@@ -235,7 +250,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateToMQTT
                       <td>{depTime}</td>
                       <td
                         style={{
-                          color: isAtRisk ? '#f87171' : ev.allocated_power_kw > 0 ? '#4ade80' : '#a1a1aa',
+                          color: isAtRisk ? '#dc2626' : ev.allocated_power_kw > 0 ? '#16a34a' : '#64748b',
                           fontWeight: isAtRisk ? 700 : 500,
                         }}
                       >
@@ -246,7 +261,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateToMQTT
                 })
               ) : (
                 <tr>
-                  <td colSpan={6} style={{ textAlign: 'center', color: '#a1a1aa', padding: '1rem' }}>
+                  <td colSpan={6} style={{ textAlign: 'center', color: '#64748b', padding: '1rem' }}>
                     No connected EVs currently reporting.
                   </td>
                 </tr>
@@ -260,7 +275,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateToMQTT
           <h2 className="scada-section-title">SYSTEM / TRANSFORMER</h2>
           <div className="scada-system-box">
             <div className="scada-meter-row">
-              <span className="scada-meter-bar" style={{ color: isOverload ? '#f87171' : '#ffffff' }}>
+              <span className="scada-meter-bar" style={{ color: isOverload ? '#dc2626' : '#0f172a' }}>
                 {blockString}
               </span>
               <span className="scada-meter-pct">{`${utilizationPct.toFixed(1)}%`}</span>
@@ -270,7 +285,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateToMQTT
               <span className="scada-metric-label">Temperature:</span>
               <span
                 className="scada-metric-value"
-                style={{ color: isOverload ? '#f87171' : ambientTempC > 35 ? '#fbbf24' : '#ffffff' }}
+                style={{ color: isOverload ? '#dc2626' : ambientTempC > 35 ? '#d97706' : '#0f172a' }}
               >
                 {`${ambientTempC.toFixed(1)}°C`}
                 {isOverload && ' 🚨 OVERLOAD'}
@@ -296,7 +311,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateToMQTT
               <span className="scada-metric-label">Precipitation / Rain:</span>
               <span
                 className="scada-metric-value"
-                style={{ color: rainStatus === 'WET' || rainStatus === 'RAIN' ? '#f87171' : '#4ade80' }}
+                style={{ color: rainStatus === 'WET' || rainStatus === 'RAIN' ? '#dc2626' : '#16a34a' }}
               >
                 {rainStatus} {rainRaw !== undefined && rainRaw !== null ? `(ADC: ${rainRaw})` : ''}
               </span>
@@ -345,15 +360,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateToMQTT
         {/* Interactive SCADA Controls Footer */}
         <div className="scada-controls-row">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <span style={{ fontSize: '0.675rem', color: '#a1a1aa' }}>Poll:</span>
+            <span style={{ fontSize: '0.675rem', color: '#64748b' }}>Poll:</span>
             <select
               value={pollInterval}
               onChange={(e) => setPollInterval(Number(e.target.value))}
               style={{
-                background: '#27272a',
-                color: '#ededed',
+                background: '#ffffff',
+                color: '#0f172a',
                 fontSize: '0.7rem',
-                border: '1px solid #3f3f46',
+                border: '1px solid #cbd5e1',
                 borderRadius: '4px',
                 padding: '2px 6px',
                 fontFamily: 'inherit',

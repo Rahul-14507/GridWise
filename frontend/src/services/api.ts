@@ -194,6 +194,33 @@ export const fetchNetworkInfo = async (): Promise<NetworkInfoResponse> => {
   return handleResponse<NetworkInfoResponse>(res);
 };
 
+export const getParkingVisionState = async (autoAdvance?: boolean): Promise<any> => {
+  const url = autoAdvance ? `${getBaseUrl()}/parking/vision?auto_advance=true` : `${getBaseUrl()}/parking/vision`;
+  const res = await fetch(url);
+  return handleResponse<any>(res);
+};
+
+export const getSlotVisionStatus = async (slotId: string): Promise<any> => {
+  const res = await fetch(`${getBaseUrl()}/parking/slot/${encodeURIComponent(slotId)}`);
+  return handleResponse<any>(res);
+};
+
+export const controlParkingReplay = async (action: string, param?: any): Promise<any> => {
+  const res = await fetch(`${getBaseUrl()}/parking/replay`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action, param }),
+  });
+  return handleResponse<any>(res);
+};
+
+export const getParkingFrameUrl = (frameId?: string, composite: boolean = false, debug: boolean = false): string => {
+  let url = `${getBaseUrl()}/parking/frame?t=${encodeURIComponent(frameId || '123')}`;
+  if (composite) url += '&composite=true';
+  if (debug) url += '&debug=true';
+  return url;
+};
+
 export const api = {
   getSystemSummary: fetchSystemSummary,
   getSystemStatus: fetchSystemStatus,
@@ -207,6 +234,10 @@ export const api = {
   getHardwareStatus: fetchHardwareStatus,
   getLatestHardwareTelemetry: fetchLatestHardwareTelemetry,
   postHardwareTelemetry,
+  getParkingVisionState,
+  getSlotVisionStatus,
+  controlParkingReplay,
+  getParkingFrameUrl,
   createQRSession,
   getQRSession,
   claimQRSession,
