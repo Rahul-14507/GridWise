@@ -276,7 +276,7 @@ export const LiveMQTTMonitorPage: React.FC<LiveMQTTMonitorPageProps> = ({ onNavi
 
           <div className="mqtt-sensor-footer">
             {isOverload ? (
-              <strong style={{ color: '#dc2626' }}>
+              <strong style={{ color: '#ef4444' }}>
                 🚨 OVERLOAD ALERT: Temperature exceeds 50.0°C! Severe thermal derating to 10.0 kW in effect.
               </strong>
             ) : telemetry && telemetry.temperature_c > 35 ? (
@@ -327,7 +327,7 @@ export const LiveMQTTMonitorPage: React.FC<LiveMQTTMonitorPageProps> = ({ onNavi
           <div>
             <div className="mqtt-card-header">
               <span className="mqtt-card-title">
-                <CloudRain size={18} style={{ color: '#0284c7' }} />
+                <CloudRain size={18} style={{ color: '#38bdf8' }} />
                 Rain / Precipitation Sensor
               </span>
               <span className={`badge ${telemetry?.rain_status === 'WET' || telemetry?.rain_status === 'RAIN' || telemetry?.rain_detected ? 'badge-danger' : 'badge-success'}`}>
@@ -346,7 +346,7 @@ export const LiveMQTTMonitorPage: React.FC<LiveMQTTMonitorPageProps> = ({ onNavi
           </div>
 
           <div className="mqtt-sensor-footer">
-            Precipitation Flag: <strong style={{ color: telemetry?.rain_detected ? '#dc2626' : '#16a34a' }}>
+            Precipitation Flag: <strong style={{ color: telemetry?.rain_detected ? '#ef4444' : '#4ade80' }}>
               {telemetry?.rain_detected ? 'PRECIPITATION DETECTED' : 'DRY SENSOR'}
             </strong>
           </div>
@@ -393,7 +393,7 @@ export const LiveMQTTMonitorPage: React.FC<LiveMQTTMonitorPageProps> = ({ onNavi
                 onClick={() => handleSimulateCustom(53.5, 3600, 'DRY', 2.95, 'BRIGHT', '🚨 Critical Overload (53.5°C > 50°C Alert)')}
                 disabled={isSendingSimulated}
                 className="dispatch-btn"
-                style={{ borderColor: '#fca5a5', background: '#fef2f2', color: '#991b1b' }}
+                style={{ borderColor: '#ef4444', background: 'rgba(239, 68, 68, 0.15)', color: '#fca5a5' }}
               >
                 <span>🚨 Overload Alert Test (53.5°C, 2.95V, DRY)</span>
                 <span className="badge badge-danger">Overload &gt;50°C</span>
