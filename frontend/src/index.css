@@ -11,17 +11,17 @@
     --border-subtle: #f1f5f9;
     --text-primary: #0f172a; /* Deep slate primary text for maximum readability */
     --text-muted: #64748b; /* Muted slate text */
-    --primary: #059669; /* Clean professional Emerald Green */
-    --primary-hover: #047857;
-    --primary-subtle: rgba(5, 150, 105, 0.08);
+    --primary: #2563eb; /* Clean professional blue */
+    --primary-hover: #1d4ed8;
+    --primary-subtle: rgba(37, 99, 235, 0.08);
     --success: #16a34a; /* Operational green for light bg */
     --success-subtle: rgba(22, 163, 74, 0.1);
     --warning: #d97706; /* Operational amber for light bg */
     --warning-subtle: rgba(217, 119, 6, 0.1);
     --danger: #dc2626; /* Operational red for light bg */
     --danger-subtle: rgba(220, 38, 38, 0.1);
-    --info: #0d9488; /* Operational Teal info */
-    --info-subtle: rgba(13, 148, 136, 0.1);
+    --info: #0284c7; /* Operational cyan info */
+    --info-subtle: rgba(2, 132, 199, 0.1);
     color-scheme: light;
   }
 
@@ -171,9 +171,9 @@ body {
 }
 
 .mode-simulation {
-  background-color: #ecfdf5;
-  color: #047857;
-  border: 1px solid #a7f3d0;
+  background-color: #dbeafe;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
 }
 
 .mode-hardware {
@@ -319,7 +319,7 @@ body {
 .badge-success { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
 .badge-warning { background: #fef3c7; color: #b45309; border: 1px solid #fcd34d; }
 .badge-danger { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
-.badge-info { background: #ccfbf1; color: #0f766e; border: 1px solid #99f6e4; }
+.badge-info { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
 .badge-neutral { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
 
 /* Dynamic Responsive Buttons */
@@ -338,7 +338,7 @@ body {
   white-space: nowrap;
 }
 
-.btn-primary { background-color: var(--primary); color: white; border-color: #047857; }
+.btn-primary { background-color: var(--primary); color: white; border-color: #1d4ed8; }
 .btn-primary:hover:not(:disabled) { background-color: var(--primary-hover); }
 
 .btn-secondary { background-color: #ffffff; color: #334155; border-color: #cbd5e1; }
@@ -502,9 +502,9 @@ body {
 }
 
 .warning-info {
-  background-color: #ccfbf1;
-  border: 1px solid #99f6e4;
-  color: #0f766e;
+  background-color: #f0f9ff;
+  border: 1px solid #93c5fd;
+  color: #075985;
 }
 
 .warning-code {
@@ -662,15 +662,15 @@ body {
 }
 
 .nav-tab-active {
-  background: #059669;
+  background: #2563eb;
   color: #ffffff;
-  box-shadow: 0 1px 2px rgba(5, 150, 105, 0.2);
+  box-shadow: 0 1px 2px rgba(37, 99, 235, 0.2);
 }
 
 .nav-tab-mqtt.nav-tab-active {
-  background: #0d9488;
+  background: #0284c7;
   color: #ffffff;
-  box-shadow: 0 1px 2px rgba(13, 148, 136, 0.2);
+  box-shadow: 0 1px 2px rgba(2, 132, 199, 0.2);
 }
 
 /* ==========================================================================
@@ -737,10 +737,10 @@ body {
 }
 
 .mqtt-hero-meta code {
-  background: #f0fdf4;
+  background: #f1f5f9;
   padding: 2px 6px;
   border-radius: 4px;
-  color: #059669;
+  color: #0284c7;
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.725rem;
 }
@@ -767,7 +767,7 @@ body {
   font-size: 1.4rem;
   font-weight: 800;
   font-family: 'JetBrains Mono', monospace;
-  color: #059669;
+  color: #0284c7;
 }
 
 /* Sensory Grid & Cards */
@@ -791,7 +791,7 @@ body {
 }
 
 .mqtt-sensor-card:hover {
-  border-color: rgba(5, 150, 105, 0.45);
+  border-color: rgba(37, 99, 235, 0.45);
   transform: translateY(-2px);
 }
 
@@ -935,9 +935,9 @@ body {
 }
 
 .dispatch-btn:hover:not(:disabled) {
-  background: #ecfdf5;
+  background: #dbeafe;
   border-color: var(--primary);
-  color: #047857;
+  color: #1d4ed8;
 }
 
 .dispatch-btn:disabled {
@@ -1370,13 +1370,13 @@ body {
 }
 
 .scada-btn-primary {
-  background: #059669;
+  background: #2563eb;
   color: #ffffff;
-  border-color: #047857;
+  border-color: #1d4ed8;
 }
 
 .scada-btn-primary:hover:not(:disabled) {
-  background: #047857;
+  background: #1d4ed8;
 }
 
 .scada-btn:disabled {

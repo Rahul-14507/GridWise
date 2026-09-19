@@ -149,7 +149,7 @@ export const KioskQRStationPage: React.FC<KioskQRStationPageProps> = ({
         {/* Header Branding */}
         <div style={{ width: '100%' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
-            <Zap size={20} style={{ color: '#059669' }} />
+            <Zap size={20} style={{ color: '#2563eb' }} />
             <h1 className="scada-main-title" style={{ margin: 0, color: '#0f172a' }}>
               GRIDWISE ONBOARDING KIOSK
             </h1>
@@ -227,7 +227,7 @@ export const KioskQRStationPage: React.FC<KioskQRStationPageProps> = ({
 
           {/* Network Host IP Config for Mobile Devices */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.725rem' }}>
-            <Wifi size={14} style={{ color: '#059669' }} />
+            <Wifi size={14} style={{ color: '#2563eb' }} />
             <span style={{ color: '#64748b' }}>Network Host IP:</span>
             <input
               type="text"
@@ -246,7 +246,7 @@ export const KioskQRStationPage: React.FC<KioskQRStationPageProps> = ({
               placeholder="e.g. 172.16.12.85"
               style={{
                 background: '#ffffff',
-                color: '#059669',
+                color: '#2563eb',
                 border: '1px solid #cbd5e1',
                 borderRadius: '6px',
                 padding: '4px 8px',
@@ -313,16 +313,16 @@ export const KioskQRStationPage: React.FC<KioskQRStationPageProps> = ({
                       justifyContent: 'center',
                       background: 'rgba(15, 23, 42, 0.85)',
                       borderRadius: '12px',
-                      color: '#10b981',
+                      color: '#38bdf8',
                       padding: '0.5rem',
                       textAlign: 'center',
                     }}
                   >
-                    <Smartphone size={32} style={{ marginBottom: '0.4rem', color: '#10b981' }} />
+                    <Smartphone size={32} style={{ marginBottom: '0.4rem', color: '#38bdf8' }} />
                     <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#ffffff' }}>
                       CHECK-IN IN PROGRESS
                     </span>
-                    <span style={{ fontSize: '0.675rem', color: '#a7f3d0', marginTop: '0.2rem' }}>
+                    <span style={{ fontSize: '0.675rem', color: '#bae6fd', marginTop: '0.2rem' }}>
                       Driver is entering details on phone
                     </span>
                   </div>
@@ -332,13 +332,13 @@ export const KioskQRStationPage: React.FC<KioskQRStationPageProps> = ({
                 style={{
                   position: 'absolute',
                   bottom: '-12px',
-                  background: session.status === 'scanned' ? '#0d9488' : '#0f172a',
-                  color: session.status === 'scanned' ? '#ffffff' : '#10b981',
+                  background: session.status === 'scanned' ? '#0284c7' : '#0f172a',
+                  color: session.status === 'scanned' ? '#ffffff' : '#38bdf8',
                   fontSize: '0.7rem',
                   fontWeight: 800,
                   padding: '3px 10px',
                   borderRadius: '9999px',
-                  border: '1px solid rgba(16, 185, 129, 0.4)',
+                  border: '1px solid rgba(56, 189, 248, 0.4)',
                   letterSpacing: '0.05em',
                 }}
               >
@@ -357,8 +357,8 @@ export const KioskQRStationPage: React.FC<KioskQRStationPageProps> = ({
           <div
             style={{
               width: '100%',
-              background: '#ecfdf5',
-              border: '1px solid #a7f3d0',
+              background: '#eff6ff',
+              border: '1px solid #bfdbfe',
               borderRadius: '8px',
               padding: '0.5rem 0.75rem',
               display: 'flex',
@@ -369,9 +369,9 @@ export const KioskQRStationPage: React.FC<KioskQRStationPageProps> = ({
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              <Smartphone size={14} style={{ color: '#059669', flexShrink: 0 }} />
+              <Smartphone size={14} style={{ color: '#2563eb', flexShrink: 0 }} />
               <span style={{ color: '#64748b' }}>Scans to:</span>
-              <code style={{ color: '#047857', fontWeight: 600 }}>{targetMobileUrl}</code>
+              <code style={{ color: '#1d4ed8', fontWeight: 600 }}>{targetMobileUrl}</code>
             </div>
             <button
               onClick={handleCopyUrl}
@@ -387,7 +387,7 @@ export const KioskQRStationPage: React.FC<KioskQRStationPageProps> = ({
         {/* Scan Instructions */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', color: '#0f172a', fontWeight: 700, fontSize: '0.85rem' }}>
-            <Smartphone size={16} style={{ color: '#059669' }} />
+            <Smartphone size={16} style={{ color: '#2563eb' }} />
             <span>Scan to track charging status & register vehicle</span>
           </div>
           <p style={{ fontSize: '0.725rem', color: '#64748b', maxWidth: '440px', lineHeight: 1.4, margin: 0 }}>
@@ -418,7 +418,7 @@ export const KioskQRStationPage: React.FC<KioskQRStationPageProps> = ({
               <span style={{ color: '#64748b' }}>Status: </span>
               <span
                 style={{
-                  color: session.status === 'active' ? '#16a34a' : session.status === 'registered' ? '#0d9488' : '#d97706',
+                  color: session.status === 'active' ? '#16a34a' : session.status === 'registered' ? '#0284c7' : '#d97706',
                   fontWeight: 700,
                   textTransform: 'uppercase',
                 }}

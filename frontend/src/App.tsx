@@ -49,7 +49,7 @@ export const App: React.FC = () => {
       {/* Top Global Navigation Bar for Admins & Operators */}
       <nav className="top-navbar">
         <div className="flex items-center gap-2">
-          <div style={{ background: '#d1fae5', border: '1px solid #a7f3d0', borderRadius: '6px', padding: '5px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#059669' }}>
+          <div style={{ background: '#dbeafe', border: '1px solid #bfdbfe', borderRadius: '6px', padding: '5px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563eb' }}>
             <Zap size={16} />
           </div>
           <span className="nav-brand-tag">GridWise Control Hub</span>
@@ -68,7 +68,7 @@ export const App: React.FC = () => {
             onClick={() => setActiveTab('mqtt')}
             className={`nav-tab nav-tab-mqtt ${activeTab === 'mqtt' ? 'nav-tab-active' : ''}`}
           >
-            <Radio size={14} className={activeTab === 'mqtt' ? 'animate-pulse text-emerald-100' : ''} />
+            <Radio size={14} className={activeTab === 'mqtt' ? 'animate-pulse text-cyan-100' : ''} />
             <span>Live ESP32 MQTT</span>
           </button>
 
@@ -76,7 +76,7 @@ export const App: React.FC = () => {
             onClick={() => setActiveTab('kiosk')}
             className={`nav-tab ${activeTab === 'kiosk' ? 'nav-tab-active' : ''}`}
           >
-            <QrCode size={14} style={{ color: activeTab === 'kiosk' ? '#ffffff' : '#059669' }} />
+            <QrCode size={14} style={{ color: activeTab === 'kiosk' ? '#ffffff' : '#0284c7' }} />
             <span>Driver QR Station</span>
           </button>
         </div>
