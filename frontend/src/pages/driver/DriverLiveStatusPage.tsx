@@ -188,7 +188,7 @@ export const DriverLiveStatusPage: React.FC<DriverLiveStatusPageProps> = ({
                 lineHeight: 1.4,
               }}
             >
-              👋 Welcome! Confirm your battery and schedule to begin optimized charging and track your return time:
+              Welcome to GridWise Fast Charging. Confirm your vehicle details and target departure time to initialize managed charging:
             </div>
 
             {/* Vehicle Identifier & Battery Capacity */}

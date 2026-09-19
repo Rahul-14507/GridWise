@@ -2,12 +2,16 @@ import React, { useState } from 'react';
 import { useSystemState } from '../hooks/useSystemState';
 import { getBaseUrl } from '../services/api';
 import {
+  AlertTriangle,
   ArrowDown,
+  Battery,
+  CheckCircle,
   ChevronUp,
   Flame,
   Play,
   Radio,
   RefreshCw,
+  Sun,
   Zap,
 } from 'lucide-react';
 import { RealtimeCharts } from '../components/charts/RealtimeCharts';
@@ -133,9 +137,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateToMQTT
         {isOverload && (
           <div
             style={{
-              background: 'rgba(239, 68, 68, 0.15)',
-              border: '2px solid #ef4444',
-              borderRadius: '8px',
+              background: '#181114',
+              border: '1px solid #ef4444',
+              borderRadius: '6px',
               padding: '0.85rem 1rem',
               display: 'flex',
               alignItems: 'center',
@@ -143,10 +147,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateToMQTT
               color: '#fca5a5',
             }}
           >
-            <Flame size={24} style={{ color: '#ef4444', flexShrink: 0 }} className="animate-bounce" />
+            <Flame size={24} style={{ color: '#ef4444', flexShrink: 0 }} />
             <div style={{ flex: 1, fontSize: '0.775rem' }}>
-              <strong style={{ color: '#ffffff', display: 'block', fontSize: '0.85rem' }}>
-                🚨 OVERLOAD ALERT: Temperature {ambientTempC.toFixed(1)}°C &gt; 50.0°C!
+              <strong style={{ color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.85rem' }}>
+                <AlertTriangle size={14} style={{ color: '#ef4444' }} />
+                OVERLOAD ALERT: Temperature {ambientTempC.toFixed(1)}°C &gt; 50.0°C!
               </strong>
               Grid transformer at severe risk of thermal damage. Capacity derated to 10.0 kW. Emergency curtailment active.
             </div>
@@ -190,7 +195,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateToMQTT
             {/* Solar Column */}
             <div className="scada-mix-col">
               <div className="scada-mix-header">
-                <span>☀</span>
+                <Sun size={14} style={{ color: '#eab308' }} />
                 <span>Solar</span>
               </div>
               <div className="scada-mix-primary">{`${solarKw.toFixed(1)} kW`}</div>
@@ -202,7 +207,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateToMQTT
             {/* Battery Column */}
             <div className="scada-mix-col">
               <div className="scada-mix-header">
-                <span>🔋</span>
+                <Battery size={14} style={{ color: '#38bdf8' }} />
                 <span>Battery</span>
               </div>
               <div className="scada-mix-primary">{`${batterySoc.toFixed(0)}% SoC`}</div>
@@ -288,7 +293,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateToMQTT
                 style={{ color: isOverload ? '#f87171' : ambientTempC > 35 ? '#fbbf24' : '#ffffff' }}
               >
                 {`${ambientTempC.toFixed(1)}°C`}
-                {isOverload && ' 🚨 OVERLOAD'}
+                {isOverload && ' OVERLOAD'}
               </span>
             </div>
 
@@ -324,19 +329,19 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateToMQTT
           <h2 className="scada-section-title">WARNINGS</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
             {warnings.length > 0 ? (
-              warnings.map((w, idx) => (
+              warnings.map((w: any, idx: number) => (
                 <div
-                  key={`${w.code}-${idx}`}
+                  key={`${w.code || idx}-${idx}`}
                   className={`scada-warning-item ${w.severity === 'critical' ? 'scada-warning-critical' : ''}`}
                 >
-                  <span>⚠</span>
-                  <span>{w.message}</span>
+                  <AlertTriangle size={13} style={{ color: '#f59e0b', flexShrink: 0 }} />
+                  <span>{w.message || w}</span>
                 </div>
               ))
             ) : (
               <div className="scada-warning-item scada-warning-nominal">
-                <span>✓</span>
-                <span>Nominal — All systems operating within baseline parameters</span>
+                <CheckCircle size={13} style={{ color: '#4ade80', flexShrink: 0 }} />
+                <span>Nominal - All systems operating within baseline parameters</span>
               </div>
             )}
           </div>
@@ -411,4 +416,3 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateToMQTT
 };
 
 export default AdminDashboard;
-
