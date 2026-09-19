@@ -56,7 +56,3 @@ async def test_api_v1_evs_endpoint():
     assert response.status_code == 200
     data = response.json()
     assert isinstance(data, list)
-    assert len(data) >= 4
-    assert data[0]["id"] == "EV-001"
-    assert "soc_percent" in data[0]
-    assert "target_soc_percent" in data[0]

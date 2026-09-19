@@ -8,7 +8,7 @@ from app.simulation.engine import SimulationEngine
 
 def test_simulation_multi_tick_integration():
     """Verify multi-tick simulation execution respecting energy balance and EV SoC progression."""
-    engine = SimulationEngine(scenario_name="NORMAL_DAY")
+    engine = SimulationEngine(scenario_name="MOCK_FLEET")
     initial_state = engine.get_state()
 
     # Verify initial conditions

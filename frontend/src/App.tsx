@@ -37,7 +37,7 @@ export const App: React.FC = () => {
   // 1. ISOLATED MOBILE DRIVER VIEW: No admin navbar, no access to other portals
   if (isDriverPortal) {
     return (
-      <div style={{ minHeight: '100vh', background: '#090d16', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '0.75rem' }}>
+      <div style={{ minHeight: '100vh', background: '#f4f6f8', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '1rem 0.75rem' }}>
         <DriverLiveStatusPage sessionId={activeSessionId} />
       </div>
     );
@@ -49,8 +49,8 @@ export const App: React.FC = () => {
       {/* Top Global Navigation Bar for Admins & Operators */}
       <nav className="top-navbar">
         <div className="flex items-center gap-2">
-          <div className="logo-icon">
-            <Zap size={18} className="text-primary" />
+          <div style={{ background: '#dbeafe', border: '1px solid #bfdbfe', borderRadius: '6px', padding: '5px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563eb' }}>
+            <Zap size={16} />
           </div>
           <span className="nav-brand-tag">GridWise Control Hub</span>
         </div>
@@ -68,7 +68,7 @@ export const App: React.FC = () => {
             onClick={() => setActiveTab('mqtt')}
             className={`nav-tab nav-tab-mqtt ${activeTab === 'mqtt' ? 'nav-tab-active' : ''}`}
           >
-            <Radio size={14} className={activeTab === 'mqtt' ? 'animate-pulse text-cyan-300' : ''} />
+            <Radio size={14} className={activeTab === 'mqtt' ? 'animate-pulse text-cyan-100' : ''} />
             <span>Live ESP32 MQTT</span>
           </button>
 
@@ -76,7 +76,7 @@ export const App: React.FC = () => {
             onClick={() => setActiveTab('kiosk')}
             className={`nav-tab ${activeTab === 'kiosk' ? 'nav-tab-active' : ''}`}
           >
-            <QrCode size={14} style={{ color: activeTab === 'kiosk' ? '#ffffff' : '#38bdf8' }} />
+            <QrCode size={14} style={{ color: activeTab === 'kiosk' ? '#ffffff' : '#0284c7' }} />
             <span>Driver QR Station</span>
           </button>
         </div>

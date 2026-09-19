@@ -58,6 +58,10 @@ def _create_standard_battery(soc_percent: float = 60.0) -> VirtualBattery:
 
 
 def _create_standard_fleet(base_time: datetime) -> List[EV]:
+    return []
+
+
+def _create_mock_fleet(base_time: datetime) -> List[EV]:
     return [
         EV(
             id="EV-001",
@@ -200,10 +204,10 @@ class ScenarioManager:
         )
 
         # 6. HIGH_EV_DEMAND
-        high_fleet = _create_standard_fleet(t0) + [
+        high_fleet = [
             EV(
-                id="EV-005",
-                slot_id="SLOT-05",
+                id="EV-001",
+                slot_id="SLOT-01",
                 battery_capacity_kwh=80.0,
                 soc_percent=15.0,
                 target_soc_percent=90.0,
@@ -214,8 +218,8 @@ class ScenarioManager:
                 status=EVStatus.WAITING,
             ),
             EV(
-                id="EV-006",
-                slot_id="SLOT-06",
+                id="EV-002",
+                slot_id="SLOT-02",
                 battery_capacity_kwh=64.0,
                 soc_percent=20.0,
                 target_soc_percent=85.0,
@@ -273,6 +277,22 @@ class ScenarioManager:
             building_demand_kw=14.0,
         )
 
+        # 9. MOCK_FLEET (for unit testing multi-EV optimization)
+        mock_fleet = Scenario(
+            name="MOCK_FLEET",
+            description="Pre-populated 4-EV test fleet for unit tests and multi-EV test verification.",
+            initial_time=t0,
+            battery=_create_standard_battery(soc_percent=60.0),
+            evs=_create_mock_fleet(t0),
+            parking=_create_default_parking(4),
+            temperature_c=28.0,
+            humidity_percent=55.0,
+            rain_detected=False,
+            rain_intensity=0.0,
+            solar_voltage_v=2.20,
+            building_demand_kw=8.0,
+        )
+
         return {
             "NORMAL_DAY": normal_day,
             "SOLAR_SURPLUS": solar_surplus,
@@ -282,6 +302,7 @@ class ScenarioManager:
             "HIGH_EV_DEMAND": high_ev_demand,
             "HOT_DAY": hot_day,
             "COMBINED_STRESS": combined_stress,
+            "MOCK_FLEET": mock_fleet,
         }
 
     @classmethod

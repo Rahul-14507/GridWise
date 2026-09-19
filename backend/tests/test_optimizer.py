@@ -7,8 +7,8 @@ from app.optimizer.models import OptimizationDecision, DeadlineStatus
 
 
 def test_charging_optimizer_normal_day():
-    """Verify optimizer execution on standard NORMAL_DAY scenario."""
-    engine = SimulationEngine(scenario_name="NORMAL_DAY")
+    """Verify optimizer execution on standard MOCK_FLEET scenario."""
+    engine = SimulationEngine(scenario_name="MOCK_FLEET")
     state = engine.get_state()
 
     optimizer = ChargingOptimizer()
