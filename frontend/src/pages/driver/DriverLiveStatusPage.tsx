@@ -138,7 +138,7 @@ export const DriverLiveStatusPage: React.FC<DriverLiveStatusPageProps> = ({
       >
         {/* Mobile Header Branding */}
         <div style={{ textAlign: 'center' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', color: '#2563eb', marginBottom: '0.25rem' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', color: '#059669', marginBottom: '0.25rem' }}>
             <Zap size={18} />
             <span style={{ fontSize: '0.75rem', fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
               GridWise Mobile EV Tracker
@@ -148,7 +148,7 @@ export const DriverLiveStatusPage: React.FC<DriverLiveStatusPageProps> = ({
             {evDetail ? `Charging: ${evDetail.id}` : 'EV Driver Check-in'}
           </h1>
           <div style={{ fontSize: '0.725rem', color: '#64748b' }}>
-            Slot: <strong style={{ color: '#0f172a' }}>{session?.bay_id || 'Bay 04'}</strong> &nbsp;|&nbsp; Token: <code style={{ color: '#2563eb' }}>{sessionId}</code>
+            Slot: <strong style={{ color: '#0f172a' }}>{session?.bay_id || 'Bay 04'}</strong> &nbsp;|&nbsp; Token: <code style={{ color: '#059669' }}>{sessionId}</code>
           </div>
           <div className="scada-divider" />
         </div>
@@ -180,12 +180,12 @@ export const DriverLiveStatusPage: React.FC<DriverLiveStatusPageProps> = ({
           <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
             <div
               style={{
-                background: '#eff6ff',
-                border: '1px solid #bfdbfe',
+                background: '#ecfdf5',
+                border: '1px solid #a7f3d0',
                 borderRadius: '10px',
                 padding: '0.85rem',
                 fontSize: '0.775rem',
-                color: '#1e40af',
+                color: '#047857',
                 lineHeight: 1.4,
               }}
             >
@@ -250,7 +250,7 @@ export const DriverLiveStatusPage: React.FC<DriverLiveStatusPageProps> = ({
                 max="95"
                 value={currentSoc}
                 onChange={(e) => setCurrentSoc(Number(e.target.value))}
-                style={{ width: '100%', cursor: 'pointer', accentColor: '#2563eb' }}
+                style={{ width: '100%', cursor: 'pointer', accentColor: '#059669' }}
               />
             </div>
 
@@ -327,14 +327,14 @@ export const DriverLiveStatusPage: React.FC<DriverLiveStatusPageProps> = ({
             <div
               style={{
                 background: '#ffffff',
-                border: '1px solid #bfdbfe',
+                border: '1px solid #a7f3d0',
                 borderRadius: '16px',
                 padding: '1.5rem',
                 textAlign: 'center',
-                boxShadow: '0 4px 15px rgba(37, 99, 235, 0.08)',
+                boxShadow: '0 4px 15px rgba(5, 150, 105, 0.08)',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', color: '#2563eb', marginBottom: '0.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', color: '#059669', marginBottom: '0.5rem' }}>
                 <BatteryCharging size={24} className="animate-pulse" />
                 <span style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                   {evDetail.status.toUpperCase()}
@@ -343,7 +343,7 @@ export const DriverLiveStatusPage: React.FC<DriverLiveStatusPageProps> = ({
 
               <div style={{ fontSize: '3.2rem', fontWeight: 900, color: '#0f172a', lineHeight: 1 }}>
                 {evDetail.soc_percent.toFixed(0)}
-                <span style={{ fontSize: '1.5rem', color: '#2563eb' }}>%</span>
+                <span style={{ fontSize: '1.5rem', color: '#059669' }}>%</span>
               </div>
 
               <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.35rem' }}>
@@ -364,7 +364,7 @@ export const DriverLiveStatusPage: React.FC<DriverLiveStatusPageProps> = ({
                   style={{
                     height: '100%',
                     width: `${Math.min(100, evDetail.soc_percent)}%`,
-                    background: 'linear-gradient(90deg, #2563eb 0%, #16a34a 100%)',
+                    background: 'linear-gradient(90deg, #059669 0%, #10b981 100%)',
                     transition: 'width 0.5s ease',
                   }}
                 />
@@ -404,10 +404,10 @@ export const DriverLiveStatusPage: React.FC<DriverLiveStatusPageProps> = ({
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.675rem', color: '#64748b' }}>
-                  <Zap size={13} style={{ color: '#2563eb' }} />
+                  <Zap size={13} style={{ color: '#059669' }} />
                   <span>CHARGING RATE:</span>
                 </div>
-                <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#2563eb', marginTop: '0.25rem' }}>
+                <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#059669', marginTop: '0.25rem' }}>
                   {`${chargingKw.toFixed(1)} kW`}
                 </div>
                 <div style={{ fontSize: '0.675rem', color: '#64748b', marginTop: '0.15rem' }}>
@@ -443,22 +443,22 @@ export const DriverLiveStatusPage: React.FC<DriverLiveStatusPageProps> = ({
             ) : (
               <div
                 style={{
-                  background: '#eff6ff',
-                  border: '1px solid #bfdbfe',
+                  background: '#ecfdf5',
+                  border: '1px solid #a7f3d0',
                   borderRadius: '10px',
                   padding: '0.85rem 1rem',
                   display: 'flex',
                   alignItems: 'flex-start',
                   gap: '0.65rem',
                   fontSize: '0.75rem',
-                  color: '#1e40af',
+                  color: '#047857',
                   lineHeight: 1.4,
                 }}
               >
-                <Clock size={20} style={{ color: '#2563eb', flexShrink: 0, marginTop: '2px' }} />
+                <Clock size={20} style={{ color: '#059669', flexShrink: 0, marginTop: '2px' }} />
                 <div>
-                  <strong style={{ color: '#1e40af' }}>Charging in Progress</strong>
-                  <p style={{ margin: '2px 0 0 0', color: '#1d4ed8' }}>
+                  <strong style={{ color: '#047857' }}>Charging in Progress</strong>
+                  <p style={{ margin: '2px 0 0 0', color: '#065f46' }}>
                     Your car is charging at <strong>Bay {session?.bay_id || evDetail.slot_id || '04'}</strong>. Estimated to reach {evDetail.target_soc_percent.toFixed(0)}% by <strong>{returnTimeStr}</strong> ({timeRemainingFormatted} remaining). Please return at <strong>{returnTimeStr}</strong> to unplug.
                   </p>
                 </div>

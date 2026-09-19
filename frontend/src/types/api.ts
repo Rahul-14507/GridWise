@@ -30,6 +30,26 @@ export interface EVSummary {
   disconnected: number;
 }
 
+export interface SlotOccupancy {
+  slot_id: string;
+  occupied: boolean;
+  confidence?: number;
+}
+
+export interface ParkingVisionState {
+  timestamp: string;
+  source_capture_time?: string;
+  source?: string;
+  camera_id?: string;
+  frame_id?: string;
+  slots: SlotOccupancy[];
+  summary: {
+    total_slots: number;
+    occupied_slots: number;
+    free_slots: number;
+  };
+}
+
 export interface ParkingSummary {
   total_slots: number;
   occupied_slots: number;

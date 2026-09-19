@@ -4,8 +4,6 @@ import { EVDetailResponse, ParkingVisionState, SlotOccupancy } from '../../types
 import {
   AlertTriangle,
   Camera,
-  CheckCircle2,
-  Clock,
   Play,
   Pause,
   RefreshCw,
@@ -111,7 +109,7 @@ export const ParkingVisionPanel: React.FC<ParkingVisionPanelProps> = ({
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.65rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
           <h2 className="scada-section-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-            <Camera size={14} style={{ color: '#38bdf8' }} />
+            <Camera size={14} style={{ color: '#059669' }} />
             PARKING VISION
           </h2>
           <span
@@ -120,9 +118,9 @@ export const ParkingVisionPanel: React.FC<ParkingVisionPanelProps> = ({
               fontWeight: 700,
               padding: '2px 6px',
               borderRadius: '4px',
-              background: 'rgba(56, 189, 248, 0.15)',
-              border: '1px solid rgba(56, 189, 248, 0.3)',
-              color: '#38bdf8',
+              background: '#d1fae5',
+              border: '1px solid #86efac',
+              color: '#059669',
               letterSpacing: '0.05em',
             }}
           >
